@@ -46,6 +46,15 @@ function DiagnosticPage() {
           </div>
         </div>
 
+        <div className="diagnostic-howto">
+          <p className="diagnostic-howto-title">이렇게 사용하세요</p>
+          <ol className="diagnostic-howto-steps">
+            <li><strong>체크리스트:</strong> 본인 상황에 해당하는 항목을 모두 체크하세요. 모르는 항목은 체크하지 않아도 됩니다.</li>
+            <li><strong>계약 만료일:</strong> 입력하면 남은 기간에 맞는 맞춤 행동 지침을 알려드립니다.</li>
+            <li><strong>진단하기:</strong> 위험도 점수와 함께 지금 당장 해야 할 일을 순서대로 안내합니다.</li>
+          </ol>
+        </div>
+
         <DiagnosticForm
           checks={checks}
           contractEndDate={contractEndDate}

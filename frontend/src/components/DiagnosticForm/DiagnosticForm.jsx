@@ -30,61 +30,71 @@ const CHECKLIST_ITEMS = [
     key: 'registrationChecked',
     label: '등기부등본 확인',
     description: '계약 전 등기부등본을 열람하여 근저당, 압류, 가처분 등을 확인했다',
-    riskType: 'safe'
+    riskType: 'safe',
+    actionHint: null
   },
   {
     key: 'ownerIdentityVerified',
     label: '집주인 신원 확인',
     description: '등기부등본의 소유자와 임대인이 동일인임을 신분증으로 확인했다',
-    riskType: 'safe'
+    riskType: 'safe',
+    actionHint: null
   },
   {
     key: 'registrationAndDate',
     label: '전입신고 및 확정일자',
     description: '입주 당일 전입신고를 하고 임대차계약서에 확정일자를 받았다',
-    riskType: 'safe'
+    riskType: 'safe',
+    actionHint: null
   },
   {
     key: 'highJeonseRate',
     label: '높은 전세가율 (80% 초과)',
     description: '전세보증금이 주택 시세의 80%를 초과한다',
-    riskType: 'danger'
+    riskType: 'danger',
+    actionHint: '경매가 진행되면 낙찰금에서 세금·근저당을 먼저 떼고 남은 금액만 받습니다. 80% 초과 시 한 푼도 못 받을 수 있습니다.'
   },
   {
     key: 'mortgageExists',
     label: '근저당권 설정',
     description: '등기부등본에 근저당권, 담보신탁 등이 설정되어 있다',
-    riskType: 'danger'
+    riskType: 'danger',
+    actionHint: '근저당 금액이 클수록 경매 시 보증금 반환 순위가 밀립니다. 등기부등본에서 근저당 금액을 꼭 확인하세요.'
   },
   {
     key: 'noHugInsurance',
     label: 'HUG 전세보증보험 미가입',
     description: '주택도시보증공사(HUG) 또는 다른 기관의 전세보증보험에 가입하지 않았다',
-    riskType: 'danger'
+    riskType: 'danger',
+    actionHint: '보험 미가입 시 집주인이 돈이 없을 때 보증금을 돌려받을 수단이 없습니다. 아직 계약 중이라면 지금이라도 가입 가능한지 HUG(1566-9009)에 문의하세요.'
   },
   {
     key: 'taxDelinquency',
     label: '임대인 세금 체납 의심',
     description: '집주인의 세금 납부 여부를 확인했을 때 체납 내역이 있거나 확인이 불가했다',
-    riskType: 'danger'
+    riskType: 'danger',
+    actionHint: '국세·지방세 체납액은 보증금보다 우선 변제됩니다. 주민센터에서 집주인의 납세증명서 제출을 요청할 수 있습니다.'
   },
   {
     key: 'corporateOwner',
     label: '법인 또는 신탁 소유 주택',
     description: '집주인이 법인이거나 신탁 부동산이다',
-    riskType: 'warning'
+    riskType: 'warning',
+    actionHint: '법인 집주인은 개인보다 파산 위험이 높고, 신탁 부동산은 계약 구조가 복잡해 보증금 회수가 어려울 수 있습니다.'
   },
   {
     key: 'multiUnitBuilding',
     label: '다세대/빌라/오피스텔',
     description: '거주하는 주택이 다세대주택, 빌라, 오피스텔이다 (아파트 제외)',
-    riskType: 'warning'
+    riskType: 'warning',
+    actionHint: '빌라·다세대는 아파트보다 경매 낙찰가가 낮아 보증금을 전액 돌려받기 어려운 경우가 많습니다.'
   },
   {
     key: 'ownerUnreachable',
     label: '임대인 연락 두절 또는 계약 회피',
     description: '집주인이 연락을 받지 않거나, 보증금 반환을 계속 미루고 있다',
-    riskType: 'critical'
+    riskType: 'critical',
+    actionHint: '지금 즉시 임차권등기명령을 신청하세요. 이사 전에 반드시 완료해야 대항력이 유지됩니다. 법원 또는 대한법률구조공단(132)에 문의하세요.'
   }
 ]
 
@@ -177,6 +187,9 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
                     </span>
                   </div>
                   <p className="checklist-desc">{item.description}</p>
+                  {item.actionHint && isChecked && (
+                    <p className="checklist-action-hint">{item.actionHint}</p>
+                  )}
                 </div>
               </label>
             )

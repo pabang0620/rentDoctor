@@ -513,6 +513,25 @@
   color: var(--color-primary);
 }
 
+/* 체크 시 행동 힌트 */
+.checklist-action-hint {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  padding: 0.5rem 0.75rem;
+  background: #fff7ed;
+  border-left: 3px solid #f97316;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  color: #7c2d12;
+  font-weight: 500;
+}
+
+.checklist-item--critical .checklist-action-hint {
+  background: #fff1f2;
+  border-left-color: #e11d48;
+  color: #881337;
+}
+
 @media (max-width: 640px) {
   .checklist-top {
     flex-wrap: wrap;
