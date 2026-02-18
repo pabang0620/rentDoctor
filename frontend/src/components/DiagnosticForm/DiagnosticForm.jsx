@@ -234,7 +234,7 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
           className="additional-textarea"
           value={additionalInfo}
           onChange={(e) => onAdditionalInfoChange(e.target.value)}
-          placeholder="현재 상황을 자세히 설명해주시면 더 정확한 진단이 가능합니다. (예: 계약 기간 만료일, 경매 진행 여부, 집주인 마지막 연락 시기 등)"
+          placeholder="현재 상황을 자세히 설명해주시면 더 정확한 진단이 가능합니다."
           rows={3}
           maxLength={1000}
         />
@@ -371,6 +371,9 @@ function DiagnosticResult({ result }) {
       {result.immediateActions && result.immediateActions.length > 0 && (
         <div className="result-section">
           <h4 className="result-section-title result-section-title--action">단계별 행동 지침</h4>
+          <div className="action-cards-notice">
+            ※ 아래 안내는 일반적인 절차를 기준으로 합니다. 비용·처리 기간·가입 조건 등은 법령 개정이나 기관 정책에 따라 변경될 수 있으니, 실제 신청 전 해당 기관에 반드시 확인하세요.
+          </div>
           <div className="action-cards">
             {result.immediateActions.map((action, i) => (
               <ActionCard key={i} action={action} index={i} />
