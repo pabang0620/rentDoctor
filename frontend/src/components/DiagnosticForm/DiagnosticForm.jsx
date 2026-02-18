@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import './DiagnosticForm.css'
 
 /**
@@ -109,6 +109,13 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
 
   const contractStatus = useMemo(() => getContractStatus(contractEndDate), [contractEndDate])
   const [expandedHints, setExpandedHints] = useState({})
+  const resultRef = useRef(null)
+
+  useEffect(() => {
+    if (result && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [result])
 
   const toggleHint = (key, e) => {
     e.preventDefault()
@@ -265,7 +272,9 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
       )}
 
       {result && (
-        <DiagnosticResult result={result} />
+        <div ref={resultRef}>
+          <DiagnosticResult result={result} />
+        </div>
       )}
     </div>
   )
