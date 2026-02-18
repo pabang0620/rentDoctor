@@ -51,7 +51,7 @@ export function useDiagnosis() {
     } finally {
       setIsLoading(false)
     }
-  }, [checks, additionalInfo])
+  }, [checks, additionalInfo, contractEndDate])
 
   /**
    * 진단 초기화

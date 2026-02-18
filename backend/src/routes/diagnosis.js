@@ -105,6 +105,7 @@ function getRiskLevel(score) {
 
 /**
  * 즉각 조치 사항 생성 (계약 만료일 포함)
+ * 반환 형식: { title, urgency('now'|'soon'|'check'), steps[], contact? }
  */
 function getImmediateActions(checks, riskScore, contractInfo) {
   const actions = []
@@ -112,50 +113,183 @@ function getImmediateActions(checks, riskScore, contractInfo) {
   // 1. 계약 만료일 기준 최우선 조치
   if (contractInfo) {
     if (contractInfo.status === 'expired' || contractInfo.status === 'today') {
-      actions.push(`[계약 만료] 지금 즉시 임차권등기명령을 신청하세요 — 이사 전 반드시 완료해야 대항력이 유지됩니다 (관할 지방법원)`)
+      actions.push({
+        title: '임차권등기명령 즉시 신청',
+        urgency: 'now',
+        steps: [
+          '대법원 전자소송 사이트(ecfs.scourt.go.kr) 또는 관할 지방법원 등기과 방문',
+          '신청서에 임차인 인적사항·임대차 계약 내용·보증금액 기재',
+          '첨부서류: 임대차계약서 사본, 주민등록등본, 건물 등기부등본 각 1통',
+          '인지대 약 15,000원 납부 후 접수 — 이사 전에 반드시 완료해야 대항력 유지'
+        ],
+        contact: { name: '대법원 전자소송', phone: '1588-0090' }
+      })
       if (!checks.noHugInsurance) {
-        actions.push('[계약 만료] HUG 전세보증보험 청구 기한을 확인하고 바로 청구하세요 (1566-9009)')
+        actions.push({
+          title: 'HUG 전세보증보험 청구',
+          urgency: 'now',
+          steps: [
+            'HUG 콜센터(1566-9009) 전화 또는 홈페이지(khug.or.kr) 접속',
+            '청구서류 준비: 임대차계약서, 전입세대열람원, 확정일자 증명서, 신분증',
+            '청구서 작성 및 접수 — 계약 만료일 기준 청구 기한 반드시 확인'
+          ],
+          contact: { name: '주택도시보증공사(HUG)', phone: '1566-9009' }
+        })
       }
-      actions.push('[계약 만료] 집주인에게 내용증명으로 보증금 반환 최고서를 발송하세요')
+      actions.push({
+        title: '집주인에게 내용증명 발송',
+        urgency: 'now',
+        steps: [
+          '내용증명 작성: 임대차 계약 정보, 보증금 반환 요청 및 기한 명시',
+          '우체국 방문하여 내용증명 3부 작성·발송 (1부 발송, 1부 수취, 1부 보관)',
+          '발송 후 수령증과 사본을 반드시 보관 — 향후 소송 시 핵심 증거'
+        ]
+      })
     } else if (contractInfo.status === 'urgent') {
-      actions.push(`[만료 ${contractInfo.days}일 전] HUG 전세보증보험 청구 가능 여부를 지금 확인하세요 (1566-9009) — 만료 1개월 전 청구 가능`)
-      actions.push(`[만료 ${contractInfo.days}일 전] 집주인에게 보증금 반환 의사를 확인하고, 미루면 내용증명을 발송하세요`)
-      actions.push(`[만료 ${contractInfo.days}일 전] 임차권등기명령 신청 서류를 미리 준비하세요`)
+      actions.push({
+        title: `HUG 전세보증보험 청구 가능 여부 확인 (만료 ${contractInfo.days}일 전)`,
+        urgency: 'now',
+        steps: [
+          'HUG 콜센터(1566-9009)에 전화하여 현재 청구 가능 여부 확인',
+          '청구 가능하면 즉시 청구 절차 시작',
+          '청구서류 준비: 임대차계약서, 전입세대열람원, 확정일자 증명서'
+        ],
+        contact: { name: '주택도시보증공사(HUG)', phone: '1566-9009' }
+      })
+      actions.push({
+        title: '집주인에게 보증금 반환 의사 확인',
+        urgency: 'now',
+        steps: [
+          '집주인에게 보증금 반환 일정을 문자 또는 서면으로 확인 요청',
+          '답변이 없거나 미루면 즉시 내용증명 발송',
+          '임차권등기명령 신청 서류(임대차계약서·등기부등본·주민등록등본)를 미리 준비'
+        ]
+      })
     }
   }
 
-  // 2. 일반 체크리스트 기반 조치
+  // 2. 전입신고·확정일자 미취득
   if (!checks.registrationAndDate) {
-    actions.push('즉시 전입신고와 확정일자를 취득하세요 (주민센터 방문)')
+    actions.push({
+      title: '전입신고 및 확정일자 즉시 취득',
+      urgency: 'now',
+      steps: [
+        '관할 주민센터(동사무소)를 방문하여 전입신고서 작성·제출',
+        '임대차계약서 원본을 지참하여 확정일자 도장 받기',
+        '전입신고 다음날 0시부터 대항력 발생 — 하루라도 빨리 처리할수록 유리'
+      ]
+    })
   }
 
+  // 3. 임대인 연락 두절
   if (checks.ownerUnreachable) {
-    if (!contractInfo || contractInfo.status === 'safe' || contractInfo.status === 'soon') {
-      actions.push('내용증명으로 보증금 반환 요청서를 발송하세요')
-      actions.push('임차권등기명령을 신청하세요 (관할 지방법원)')
+    if (!contractInfo || ['safe', 'soon'].includes(contractInfo.status)) {
+      actions.push({
+        title: '내용증명으로 보증금 반환 요청',
+        urgency: 'now',
+        steps: [
+          '내용증명 작성: 임대차 계약 기간, 보증금 액수, 반환 요청 및 이행 기한 명시',
+          '우체국에서 집주인 주소지로 내용증명 발송',
+          '발송 사실 자체가 법적 효력 — 수령증과 사본을 반드시 보관'
+        ]
+      })
+      actions.push({
+        title: '임차권등기명령 신청',
+        urgency: 'now',
+        steps: [
+          '대법원 전자소송 사이트(ecfs.scourt.go.kr) 또는 관할 지방법원 등기과 방문',
+          '첨부서류: 임대차계약서 사본, 주민등록등본, 건물 등기부등본 각 1통',
+          '인지대 약 15,000원 납부 후 접수 — 이사 전 반드시 완료'
+        ],
+        contact: { name: '대법원 전자소송', phone: '1588-0090' }
+      })
     }
   }
 
+  // 4. HUG 보험 청구 (가입 상태인 경우)
   if (!checks.noHugInsurance) {
     if (!contractInfo || contractInfo.status === 'safe') {
-      actions.push('HUG 전세보증보험 청구 절차를 시작하세요 (1566-9009)')
+      actions.push({
+        title: 'HUG 전세보증보험 청구 절차 시작',
+        urgency: 'soon',
+        steps: [
+          'HUG 콜센터(1566-9009) 전화 또는 홈페이지(khug.or.kr) 접속',
+          '청구서류 준비: 임대차계약서, 전입세대열람원, 확정일자 증명서, 신분증',
+          '청구서 작성 및 접수'
+        ],
+        contact: { name: '주택도시보증공사(HUG)', phone: '1566-9009' }
+      })
     }
   } else if (riskScore >= 50 && (!contractInfo || !['expired', 'today', 'urgent'].includes(contractInfo.status))) {
-    actions.push('HUG 전세보증보험 가입 가능 여부를 확인하세요 (1566-9009)')
+    actions.push({
+      title: 'HUG 전세보증보험 가입 가능 여부 확인',
+      urgency: 'check',
+      steps: [
+        'HUG 콜센터(1566-9009)에 전화하여 현재 가입 가능한지 확인',
+        '가입 조건: 계약기간 절반 이하 경과, 주택가격 기준 이하 등',
+        '가입 가능하면 즉시 신청 — 향후 분쟁 시 보증금을 돌려받을 가장 확실한 수단'
+      ],
+      contact: { name: '주택도시보증공사(HUG)', phone: '1566-9009' }
+    })
   }
 
+  // 5. 전문가 상담 (riskScore >= 50)
   if (riskScore >= 50) {
-    actions.push('대한법률구조공단(132)에 무료 법률 상담을 신청하세요')
-    actions.push('전세사기피해지원센터를 방문하거나 온라인 신청하세요')
+    actions.push({
+      title: '대한법률구조공단 무료 법률 상담',
+      urgency: 'soon',
+      steps: [
+        '132 전화 또는 홈페이지(klac.or.kr) 접속하여 상담 신청',
+        '담당 변호사와 전화 또는 방문 상담 진행',
+        '보증금 반환 소송 지원 가능 여부 및 절차 안내 — 완전 무료'
+      ],
+      contact: { name: '대한법률구조공단', phone: '132' }
+    })
+    actions.push({
+      title: '전세사기피해지원센터 접수',
+      urgency: 'soon',
+      steps: [
+        '온라인 신청(jeonse.or.kr) 또는 가까운 지원센터 방문',
+        '피해 내용·임대차 계약 서류 제출하여 피해 접수',
+        '전담 매니저 배정 후 법률·금융·주거 지원 연계'
+      ],
+      contact: { name: '전세사기피해지원센터', phone: '1533-2020' }
+    })
   }
 
+  // 6. 형사 고소 검토 (riskScore >= 70)
   if (riskScore >= 70) {
-    actions.push('경찰청 전세사기 전담 수사팀에 형사 고소를 검토하세요')
+    actions.push({
+      title: '형사 고소 검토',
+      urgency: 'check',
+      steps: [
+        '대한법률구조공단(132) 또는 변호사와 상담하여 고소 가능 여부 먼저 확인',
+        '고소장 작성: 피해 사실, 사기 유형, 증거자료(계약서·문자·송금내역 등) 첨부',
+        '관할 경찰서 또는 경찰청 전세사기 전담 수사팀에 고소장 접수'
+      ],
+      contact: { name: '경찰청 전세사기 전담팀', phone: '182' }
+    })
   }
 
+  // 7. 기본 예방 조치 (위험도 낮을 때)
   if (actions.length === 0) {
-    actions.push('정기적으로 등기부등본을 확인하세요')
-    actions.push('집주인의 세금 납부 여부를 관할 세무서에서 확인하세요')
+    actions.push({
+      title: '등기부등본 정기 확인',
+      urgency: 'check',
+      steps: [
+        '대법원 인터넷등기소(iros.go.kr)에서 1~2개월마다 등기부등본 열람',
+        '근저당·압류·가처분 등 권리 변동 사항 확인',
+        '이상 발견 시 즉시 대한법률구조공단(132)에 상담'
+      ]
+    })
+    actions.push({
+      title: '집주인 세금 납부 여부 확인',
+      urgency: 'check',
+      steps: [
+        '집주인의 동의를 받아 관할 세무서에서 납세증명서 확인 요청',
+        '체납 내역 발견 시 대한법률구조공단(132)에 즉시 상담'
+      ]
+    })
   }
 
   return actions

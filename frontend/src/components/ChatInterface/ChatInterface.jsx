@@ -39,16 +39,18 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
     {
       id: 'start',
       label: '어디서 시작하죠?',
+      desc: '처음이라 막막한 분들을 위한 첫 단계 안내',
       questions: [
         '전세사기 피해를 당한 것 같은데 지금 당장 뭘 해야 하나요?',
         '계약 만료 후 보증금을 못 받고 있습니다. 순서대로 알려주세요.',
-        '지금 임차권등기명령을 신청해야 한다고 하는데, 이게 뭔가요?',
+        '임차권등기명령을 신청해야 한다고 하는데, 이게 뭔가요?',
         '전세사기 피해자 지원을 신청하려면 어떻게 해야 하나요?',
       ]
     },
     {
       id: 'urgent',
       label: '긴급 상황',
+      desc: '지금 당장 조치가 필요한 상황별 대응',
       questions: [
         '집주인이 연락이 끊겼습니다. 지금 당장 어떻게 해야 하나요?',
         '경매 통지서를 받았습니다. 보증금을 지킬 수 있나요?',
@@ -59,6 +61,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
     {
       id: 'procedure',
       label: '절차 안내',
+      desc: '법적 조치 방법과 필요 서류 안내',
       questions: [
         '임차권등기명령 신청 방법과 필요한 서류를 알려주세요.',
         'HUG 전세보증보험 청구 절차를 단계별로 알려주세요.',
@@ -69,6 +72,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
     {
       id: 'terms',
       label: '용어 설명',
+      desc: '처음 듣는 법률 용어를 쉽게 설명해드립니다',
       questions: [
         '임차권등기명령이 뭔가요? 신청하면 어떤 효과가 있나요?',
         '확정일자와 전입신고의 차이가 뭔가요? 둘 다 해야 하나요?',
@@ -169,20 +173,28 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
               </button>
             ))}
           </div>
-          {openCategory && (
-            <div className="chat-quick-list">
-              {QUICK_CATEGORIES.find(c => c.id === openCategory)?.questions.map((question, idx) => (
-                <button
-                  key={idx}
-                  className="chat-quick-item"
-                  onClick={() => handleQuickQuestion(question)}
-                  disabled={isLoading}
-                >
-                  {question}
-                </button>
-              ))}
-            </div>
-          )}
+          {openCategory && (() => {
+            const active = QUICK_CATEGORIES.find(c => c.id === openCategory)
+            return (
+              <div className="chat-quick-list">
+                {active?.desc && (
+                  <p className="chat-quick-category-desc">{active.desc}</p>
+                )}
+                {active?.questions.map((question, idx) => (
+                  <button
+                    key={idx}
+                    className="chat-quick-item"
+                    onClick={() => handleQuickQuestion(question)}
+                    disabled={isLoading}
+                  >
+                    <span className="chat-quick-num">{idx + 1}</span>
+                    <span className="chat-quick-text">{question}</span>
+                    <span className="chat-quick-arrow">→</span>
+                  </button>
+                ))}
+              </div>
+            )
+          })()}
         </div>
       )}
 
@@ -194,7 +206,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="전세사기 관련 질문을 입력하세요... (Enter로 전송, Shift+Enter로 줄바꿈)"
+            placeholder="질문을 입력하세요..."
             rows={2}
             disabled={isLoading}
             maxLength={2000}

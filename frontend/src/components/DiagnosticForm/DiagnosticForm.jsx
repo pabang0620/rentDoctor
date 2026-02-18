@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import './DiagnosticForm.css'
 
 /**
@@ -31,70 +31,70 @@ const CHECKLIST_ITEMS = [
     label: '등기부등본 확인',
     description: '계약 전 등기부등본을 열람하여 근저당, 압류, 가처분 등을 확인했다',
     riskType: 'safe',
-    actionHint: null
+    hint: null
   },
   {
     key: 'ownerIdentityVerified',
     label: '집주인 신원 확인',
     description: '등기부등본의 소유자와 임대인이 동일인임을 신분증으로 확인했다',
     riskType: 'safe',
-    actionHint: null
+    hint: null
   },
   {
     key: 'registrationAndDate',
     label: '전입신고 및 확정일자',
     description: '입주 당일 전입신고를 하고 임대차계약서에 확정일자를 받았다',
     riskType: 'safe',
-    actionHint: null
+    hint: null
   },
   {
     key: 'highJeonseRate',
     label: '높은 전세가율 (80% 초과)',
     description: '전세보증금이 주택 시세의 80%를 초과한다',
     riskType: 'danger',
-    actionHint: '경매가 진행되면 낙찰금에서 세금·근저당을 먼저 떼고 남은 금액만 받습니다. 80% 초과 시 한 푼도 못 받을 수 있습니다.'
+    hint: '경매 낙찰금에서 세금과 근저당을 먼저 갚고 남은 금액을 돌려받는 구조입니다. 전세가율이 높을수록 내 보증금이 돌아올 몫이 줄어들며, 전액 회수가 어려울 수 있습니다.'
   },
   {
     key: 'mortgageExists',
     label: '근저당권 설정',
-    description: '등기부등본에 근저당권, 담보신탁 등이 설정되어 있다',
+    description: '등기부등본에 근저당권 또는 담보신탁이 설정되어 있다',
     riskType: 'danger',
-    actionHint: '근저당 금액이 클수록 경매 시 보증금 반환 순위가 밀립니다. 등기부등본에서 근저당 금액을 꼭 확인하세요.'
+    hint: '은행이 먼저 돈을 가져가고 남은 돈에서 내 보증금을 받는 구조입니다. 근저당 금액 + 내 보증금이 시세를 초과하면 전액 돌려받기 어렵습니다.'
   },
   {
     key: 'noHugInsurance',
     label: 'HUG 전세보증보험 미가입',
     description: '주택도시보증공사(HUG) 또는 다른 기관의 전세보증보험에 가입하지 않았다',
     riskType: 'danger',
-    actionHint: '보험 미가입 시 집주인이 돈이 없을 때 보증금을 돌려받을 수단이 없습니다. 아직 계약 중이라면 지금이라도 가입 가능한지 HUG(1566-9009)에 문의하세요.'
+    hint: '보험이 없으면 집주인이 파산하거나 연락이 끊겼을 때 보증금을 돌려받을 공식 수단이 없습니다. 보험은 집주인 동의 없이도 세입자가 단독으로 가입할 수 있습니다.'
   },
   {
     key: 'taxDelinquency',
     label: '임대인 세금 체납 의심',
     description: '집주인의 세금 납부 여부를 확인했을 때 체납 내역이 있거나 확인이 불가했다',
     riskType: 'danger',
-    actionHint: '국세·지방세 체납액은 보증금보다 우선 변제됩니다. 주민센터에서 집주인의 납세증명서 제출을 요청할 수 있습니다.'
+    hint: '집주인의 국세·지방세 체납액은 내 보증금보다 법적으로 먼저 변제됩니다. 세금이 많이 밀려있으면 경매 후 내 몫이 크게 줄어들 수 있습니다.'
   },
   {
     key: 'corporateOwner',
     label: '법인 또는 신탁 소유 주택',
     description: '집주인이 법인이거나 신탁 부동산이다',
     riskType: 'warning',
-    actionHint: '법인 집주인은 개인보다 파산 위험이 높고, 신탁 부동산은 계약 구조가 복잡해 보증금 회수가 어려울 수 있습니다.'
+    hint: '법인 집주인은 개인보다 부도·파산 위험이 높습니다. 신탁 부동산은 실소유 구조가 복잡해서 계약이 잘못되면 보증금 반환이 매우 어려워질 수 있습니다.'
   },
   {
     key: 'multiUnitBuilding',
     label: '다세대/빌라/오피스텔',
     description: '거주하는 주택이 다세대주택, 빌라, 오피스텔이다 (아파트 제외)',
     riskType: 'warning',
-    actionHint: '빌라·다세대는 아파트보다 경매 낙찰가가 낮아 보증금을 전액 돌려받기 어려운 경우가 많습니다.'
+    hint: '빌라·다세대는 아파트보다 경매 낙찰가가 낮아 보증금을 전액 회수하지 못하는 경우가 많습니다. 다른 위험 항목이 함께 해당된다면 특히 주의가 필요합니다.'
   },
   {
     key: 'ownerUnreachable',
     label: '임대인 연락 두절 또는 계약 회피',
     description: '집주인이 연락을 받지 않거나, 보증금 반환을 계속 미루고 있다',
     riskType: 'critical',
-    actionHint: '지금 즉시 임차권등기명령을 신청하세요. 이사 전에 반드시 완료해야 대항력이 유지됩니다. 법원 또는 대한법률구조공단(132)에 문의하세요.'
+    hint: '연락 두절은 보증금 반환 의사가 없다는 가장 강한 신호입니다. 이사를 나가면 대항력을 잃어 이후 법적 청구가 더 어려워집니다. 이사 전에 반드시 임차권등기명령을 완료하세요.'
   }
 ]
 
@@ -108,6 +108,12 @@ const RISK_CONFIG = {
 function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoading, error, checkedCount, onToggle, onContractEndDateChange, onAdditionalInfoChange, onDiagnose, onReset }) {
 
   const contractStatus = useMemo(() => getContractStatus(contractEndDate), [contractEndDate])
+  const [expandedHints, setExpandedHints] = useState({})
+
+  const toggleHint = (key, e) => {
+    e.preventDefault()
+    setExpandedHints(prev => ({ ...prev, [key]: !prev[key] }))
+  }
 
   const getRiskType = (key) => {
     const item = CHECKLIST_ITEMS.find(i => i.key === key)
@@ -187,8 +193,26 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
                     </span>
                   </div>
                   <p className="checklist-desc">{item.description}</p>
-                  {item.actionHint && isChecked && (
-                    <p className="checklist-action-hint">{item.actionHint}</p>
+                  {item.hint && isChecked && (
+                    <div className="checklist-hint-wrapper">
+                      <button
+                        className={`checklist-hint-chip ${expandedHints[item.key] ? 'active' : ''}`}
+                        onClick={(e) => toggleHint(item.key, e)}
+                        aria-expanded={!!expandedHints[item.key]}
+                      >
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                          <circle cx="8" cy="8" r="7"/>
+                          <line x1="8" y1="7.5" x2="8" y2="11"/>
+                          <circle cx="8" cy="5" r="0.75" fill="currentColor" stroke="none"/>
+                        </svg>
+                        왜 위험한가요?
+                      </button>
+                      {expandedHints[item.key] && (
+                        <div className={`checklist-hint checklist-hint--${item.riskType}`}>
+                          <p className="checklist-hint-text">{item.hint}</p>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </label>
@@ -247,6 +271,51 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
   )
 }
 
+const URGENCY_CONFIG = {
+  now:   { label: '지금 바로',    color: '#dc2626', bg: '#fef2f2', border: '#dc2626' },
+  soon:  { label: '빠른 시일 내', color: '#d97706', bg: '#fffbeb', border: '#d97706' },
+  check: { label: '확인·검토',   color: '#2563eb', bg: '#eff6ff', border: '#2563eb' }
+}
+
+function ActionCard({ action, index }) {
+  // 구버전 호환: string으로 온 경우 단순 표시
+  if (typeof action === 'string') {
+    return (
+      <div className="action-card action-card--compat">
+        <span className="action-card-num">{index + 1}</span>
+        <p className="action-card-title">{action}</p>
+      </div>
+    )
+  }
+
+  const urgency = URGENCY_CONFIG[action.urgency] || URGENCY_CONFIG.soon
+
+  return (
+    <div className="action-card" style={{ borderLeftColor: urgency.border }}>
+      <div className="action-card-header">
+        <span className="action-card-num">{index + 1}</span>
+        <span className="action-card-badge" style={{ color: urgency.color, background: urgency.bg }}>
+          {urgency.label}
+        </span>
+        <h5 className="action-card-title">{action.title}</h5>
+      </div>
+      <ol className="action-card-steps">
+        {action.steps.map((step, j) => (
+          <li key={j}>{step}</li>
+        ))}
+      </ol>
+      {action.contact && (
+        <a href={`tel:${action.contact.phone}`} className="action-card-contact">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" width="13" height="13">
+            <path d="M2 2.5C2 2.5 3.5 1 5 2.5L6.5 4C7 4.5 7 5.5 6.5 6L5.5 7C6 8 7 9.5 9 10.5L10 9.5C10.5 9 11.5 9 12 9.5L13.5 11C15 12.5 13.5 14 13.5 14C13.5 14 4 14 2 4.5C2 3.5 2 2.5 2 2.5Z"/>
+          </svg>
+          {action.contact.name} {action.contact.phone}
+        </a>
+      )}
+    </div>
+  )
+}
+
 function DiagnosticResult({ result }) {
   const riskConfig = RISK_CONFIG[result.riskLevel] || RISK_CONFIG['중간']
 
@@ -268,10 +337,7 @@ function DiagnosticResult({ result }) {
           <div className="result-score-bar">
             <div
               className="result-score-fill"
-              style={{
-                width: `${result.riskScore}%`,
-                backgroundColor: riskConfig.color
-              }}
+              style={{ width: `${result.riskScore}%`, backgroundColor: riskConfig.color }}
             />
           </div>
           <p className="result-score-text" style={{ color: riskConfig.color }}>
@@ -295,12 +361,12 @@ function DiagnosticResult({ result }) {
 
       {result.immediateActions && result.immediateActions.length > 0 && (
         <div className="result-section">
-          <h4 className="result-section-title result-section-title--action">즉시 해야 할 행동</h4>
-          <ol className="result-list result-list--action">
+          <h4 className="result-section-title result-section-title--action">단계별 행동 지침</h4>
+          <div className="action-cards">
             {result.immediateActions.map((action, i) => (
-              <li key={i}>{action}</li>
+              <ActionCard key={i} action={action} index={i} />
             ))}
-          </ol>
+          </div>
         </div>
       )}
 
@@ -309,11 +375,7 @@ function DiagnosticResult({ result }) {
           <h4 className="result-section-title result-section-title--contact">연락해야 할 지원 기관</h4>
           <div className="result-agencies">
             {result.supportAgencies.map((agency, i) => (
-              <a
-                key={i}
-                href={`tel:${agency.phone}`}
-                className="result-agency"
-              >
+              <a key={i} href={`tel:${agency.phone}`} className="result-agency">
                 <span className="agency-name">{agency.name}</span>
                 <span className="agency-phone">☎ {agency.phone}</span>
                 <span className="agency-desc">{agency.description}</span>

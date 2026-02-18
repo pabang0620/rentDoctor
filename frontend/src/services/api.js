@@ -1,6 +1,22 @@
 const BASE_URL = '/api'
 
 /**
+ * 네트워크/서버 에러를 사람이 읽기 좋은 메시지로 변환
+ */
+function toUserMessage(error) {
+  const msg = error?.message || ''
+  if (
+    msg === 'Failed to fetch' ||
+    msg.includes('NetworkError') ||
+    msg.includes('network') ||
+    msg.includes('ECONNREFUSED')
+  ) {
+    return '서버에 연결할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요.'
+  }
+  return msg || '알 수 없는 오류가 발생했습니다.'
+}
+
+/**
  * 공통 fetch 래퍼
  */
 async function fetchAPI(endpoint, options = {}) {
@@ -13,11 +29,25 @@ async function fetchAPI(endpoint, options = {}) {
     ...options
   }
 
-  const response = await fetch(url, config)
-  const data = await response.json()
+  let response
+  try {
+    response = await fetch(url, config)
+  } catch (networkErr) {
+    throw new Error(toUserMessage(networkErr))
+  }
+
+  const text = await response.text()
+  let data = {}
+  if (text) {
+    try {
+      data = JSON.parse(text)
+    } catch {
+      throw new Error(`서버 응답을 처리할 수 없습니다. (${response.status})`)
+    }
+  }
 
   if (!response.ok) {
-    throw new Error(data.error || `HTTP error! status: ${response.status}`)
+    throw new Error(data.error || `오류가 발생했습니다. (${response.status})`)
   }
 
   return data
@@ -27,9 +57,6 @@ async function fetchAPI(endpoint, options = {}) {
  * 채팅 API
  */
 export const chatAPI = {
-  /**
-   * 메시지 전송 (일반 응답)
-   */
   sendMessage: async (message, sessionId = null) => {
     return fetchAPI('/chat', {
       method: 'POST',
@@ -37,27 +64,30 @@ export const chatAPI = {
     })
   },
 
-  /**
-   * 스트리밍 채팅
-   * @param {string} message
-   * @param {string|null} sessionId
-   * @param {Function} onChunk - (text: string) => void
-   * @param {Function} onDone - (sessionId: string) => void
-   * @param {Function} onError - (error: Error) => void
-   */
   sendStreamMessage: async (message, sessionId, onChunk, onDone, onError) => {
+    let response
     try {
-      const response = await fetch(`${BASE_URL}/chat/stream`, {
+      response = await fetch(`${BASE_URL}/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, sessionId })
       })
+    } catch (networkErr) {
+      onError(new Error(toUserMessage(networkErr)))
+      return
+    }
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || '스트리밍 요청 실패')
-      }
+    if (!response.ok) {
+      let errorData = {}
+      try {
+        const text = await response.text()
+        if (text) errorData = JSON.parse(text)
+      } catch { /* 무시 */ }
+      onError(new Error(errorData.error || `요청에 실패했습니다. (${response.status})`))
+      return
+    }
 
+    try {
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
 
@@ -72,7 +102,6 @@ export const chatAPI = {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6))
-
               if (data.type === 'chunk') {
                 onChunk(data.text)
               } else if (data.type === 'done') {
@@ -81,26 +110,20 @@ export const chatAPI = {
                 onError(new Error(data.message))
               }
             } catch {
-              // 파싱 실패 무시
+              // 개별 라인 파싱 실패 무시
             }
           }
         }
       }
-    } catch (error) {
-      onError(error)
+    } catch (streamErr) {
+      onError(new Error(toUserMessage(streamErr)))
     }
   },
 
-  /**
-   * 세션 히스토리 조회
-   */
   getSessionHistory: async (sessionId) => {
     return fetchAPI(`/chat/session/${sessionId}`)
   },
 
-  /**
-   * 세션 삭제
-   */
   deleteSession: async (sessionId) => {
     return fetchAPI(`/chat/session/${sessionId}`, { method: 'DELETE' })
   }
@@ -110,9 +133,6 @@ export const chatAPI = {
  * 진단 API
  */
 export const diagnosisAPI = {
-  /**
-   * 전세사기 피해 진단
-   */
   diagnose: async (checks, additionalInfo = '', useAI = false, contractEndDate = '') => {
     return fetchAPI('/diagnosis', {
       method: 'POST',
@@ -120,52 +140,9 @@ export const diagnosisAPI = {
     })
   },
 
-  /**
-   * 체크리스트 항목 조회
-   */
   getChecklist: async () => {
     return fetchAPI('/diagnosis/checklist')
   }
 }
 
-/**
- * 법령 정보 API
- */
-export const legalAPI = {
-  /**
-   * 법령 목록 조회
-   */
-  getLaws: async () => {
-    return fetchAPI('/legal/laws')
-  },
-
-  /**
-   * 법령 상세 조회
-   */
-  getLawDetail: async (id) => {
-    return fetchAPI(`/legal/laws/${id}`)
-  },
-
-  /**
-   * 사례 목록 조회
-   */
-  getCases: async () => {
-    return fetchAPI('/legal/cases')
-  },
-
-  /**
-   * FAQ 조회
-   */
-  getFaq: async () => {
-    return fetchAPI('/legal/faq')
-  },
-
-  /**
-   * 지원 기관 목록
-   */
-  getSupportAgencies: async () => {
-    return fetchAPI('/legal/support-agencies')
-  }
-}
-
-export default { chatAPI, diagnosisAPI, legalAPI }
+export default { chatAPI, diagnosisAPI }
