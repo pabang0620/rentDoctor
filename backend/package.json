@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+    "dev:debug": "nodemon --inspect src/app.js",
     "db:migrate": "node src/db/migrate.js"
   },
   "dependencies": {
