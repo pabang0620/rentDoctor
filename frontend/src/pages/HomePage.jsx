@@ -1,119 +1,180 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './HomePage.css'
 
+const situationCards = [
+  {
+    id: 'expiring',
+    title: '계약 만료가 다가오는데 보증금 걱정돼요',
+    desc: '만료 전 준비할 것, 임차권등기 신청 시기 등을 알려드립니다',
+    tag: '만료 임박',
+    tagType: 'urgent',
+    actionText: '지금 진단하기',
+    link: '/diagnosis',
+  },
+  {
+    id: 'unreachable',
+    title: '집주인이 연락이 안 됩니다',
+    desc: '연락 두절 시 즉시 해야 할 조치, 법적 대응 방법을 알려드립니다',
+    tag: '긴급',
+    tagType: 'critical',
+    actionText: '대응 방법 확인',
+    link: '/chat',
+  },
+  {
+    id: 'auction',
+    title: '경매 통지서를 받았어요',
+    desc: '경매 중 배당 신청, 보증금 회수 방법을 단계별로 안내합니다',
+    tag: '즉시 조치 필요',
+    tagType: 'critical',
+    actionText: '지금 바로 확인',
+    link: '/chat',
+  },
+  {
+    id: 'left',
+    title: '이사 후에도 보증금을 못 받았어요',
+    desc: '이미 이사를 나간 경우 보증금 회수 방법과 소송 절차를 안내합니다',
+    tag: '법적 조치 필요',
+    tagType: 'danger',
+    actionText: '해결 방법 알아보기',
+    link: '/chat',
+  },
+]
+
+const emergencyContacts = [
+  { name: '대한법률구조공단', phone: '132' },
+  { name: '전세사기피해지원센터', phone: '1533-2020' },
+  { name: '주택도시보증공사(HUG)', phone: '1566-9009' },
+  { name: '경찰청 민원', phone: '112' },
+]
+
+const warningSignals = [
+  '전세가율이 시세의 80%를 초과한다',
+  '등기부등본에 근저당권이 설정되어 있다',
+  '집주인이 신원 확인을 꺼려한다',
+  '전입신고 또는 확정일자를 받지 못했다',
+  '임대인이 연락을 피하거나 응답이 없다',
+  'HUG 전세보증보험에 가입되어 있지 않다',
+]
+
+const processSteps = [
+  { step: '01', title: '대항력 확보', desc: '전입신고 + 확정일자 취득', timing: '입주 당일 필수' },
+  { step: '02', title: '상황 파악', desc: '등기부등본 열람 및 위험 진단', timing: '즉시' },
+  { step: '03', title: '임차권등기', desc: '이사 전 법원 신청', timing: '이사 전 반드시' },
+  { step: '04', title: '법적 조치', desc: '내용증명 발송 / 소송 제기', timing: '1주일 이내' },
+  { step: '05', title: '지원 신청', desc: '특별법 피해자 지원 신청', timing: '조치 후 진행' },
+]
+
+const stats = [
+  { value: '2.4만', label: '전세사기 피해 접수 건수 (2023)' },
+  { value: '3.4조', label: '추정 피해 보증금 규모' },
+  { value: '9개', label: '핵심 법령 데이터베이스' },
+  { value: '24시간', label: '무료 상담 운영' },
+]
+
 function HomePage() {
-  const features = [
-    {
-      icon: '🤖',
-      title: 'AI 법률 상담',
-      description: 'Claude AI가 전세사기 관련 법률 질문에 24시간 답변합니다. 확정일자, 임차권등기, 경매 대응 등 전문 상담.',
-      link: '/chat',
-      linkText: '상담 시작하기',
-      color: '#e1effe'
-    },
-    {
-      icon: '🔍',
-      title: '피해 위험도 진단',
-      description: '10가지 핵심 체크리스트로 전세사기 피해 가능성을 진단합니다. 위험도 점수와 맞춤 대응 방법을 제공합니다.',
-      link: '/diagnosis',
-      linkText: '지금 진단하기',
-      color: '#fef3c7'
-    },
-    {
-      icon: '📚',
-      title: '법령 정보',
-      description: '주택임대차보호법, 전세사기피해자 지원 특별법 등 주요 법령 정보와 판례를 쉽게 이해할 수 있도록 제공합니다.',
-      link: '/chat',
-      linkText: '법령 질문하기',
-      color: '#def7ec'
-    }
-  ]
-
-  const stats = [
-    { value: '2만+', label: '전세사기 피해자 (2023년)' },
-    { value: '1조+', label: '전세사기 피해액' },
-    { value: '132', label: '법률구조공단 무료상담' },
-    { value: '24시간', label: 'AI 상담 가능 시간' }
-  ]
-
-  const emergencyContacts = [
-    { name: '대한법률구조공단', phone: '132', desc: '무료 법률 상담' },
-    { name: '전세사기피해지원센터', phone: '1533-2020', desc: '피해자 지원' },
-    { name: 'HUG 주택도시보증공사', phone: '1566-9009', desc: '전세보증보험' },
-    { name: '경찰 신고', phone: '112', desc: '긴급/형사 신고' }
-  ]
-
-  const warningSignals = [
-    '전세가율이 시세의 80%를 초과한다',
-    '집주인이 등기부등본 열람을 거부한다',
-    '확정일자나 전입신고를 이미 늦게 했다',
-    '집주인 연락이 갑자기 안 된다',
-    '근저당이 과도하게 설정되어 있다',
-    'HUG 보증보험 가입이 거절되었다'
-  ]
-
   return (
     <div className="home-page">
-      {/* 히어로 섹션 */}
+      {/* 히어로 */}
       <section className="hero">
         <div className="hero-inner">
-          <div className="hero-badge">전세사기 피해자를 위한 서비스</div>
+          <div className="hero-badge">주택임대차보호법 · 전세사기특별법 전문</div>
           <h1 className="hero-title">
-            전세사기, 혼자 고민하지 마세요
+            전세사기 피해,
             <br />
-            <span className="hero-title-highlight">AI 법률 전문가</span>가 함께합니다
+            <span className="hero-title-highlight">지금 바로 확인하세요</span>
           </h1>
           <p className="hero-desc">
-            주택임대차보호법, 전세사기특별법, HUG 전세보증보험 전문 AI가
+            처음이라 어떻게 해야 할지 모르셔도 괜찮습니다.
             <br />
-            24시간 무료로 법률 상담을 도와드립니다.
+            지금 상황을 선택하면 해야 할 일을 단계별로 안내해 드립니다.
           </p>
           <div className="hero-actions">
-            <Link to="/chat" className="btn btn-primary btn-lg">
-              AI 상담 시작하기 →
+            <Link to="/diagnosis" className="btn btn-primary btn-lg">
+              위험도 진단하기
             </Link>
-            <Link to="/diagnosis" className="btn btn-secondary btn-lg">
-              피해 진단하기
+            <Link to="/chat" className="btn btn-secondary btn-lg">
+              법률 상담하기
             </Link>
           </div>
           <p className="hero-disclaimer">
-            ⚠️ 본 서비스는 법률 정보 제공 목적입니다. 실제 소송은 전문 변호사와 상담하세요.
+            본 서비스는 법률 정보 제공 목적입니다. 실제 소송은 전문 변호사와 상담하세요.
           </p>
         </div>
       </section>
 
-      {/* 긴급 상황 배너 */}
+      {/* 긴급 연락처 배너 */}
       <div className="emergency-banner">
         <div className="emergency-banner-inner">
-          <span className="emergency-label">🚨 긴급 연락처</span>
+          <span className="emergency-label">긴급 연락처</span>
           <div className="emergency-contacts">
-            {emergencyContacts.map((contact, i) => (
-              <a key={i} href={`tel:${contact.phone}`} className="emergency-contact">
-                <span className="emergency-name">{contact.name}</span>
-                <span className="emergency-phone">{contact.phone}</span>
+            {emergencyContacts.map((c) => (
+              <a key={c.phone} href={`tel:${c.phone}`} className="emergency-contact">
+                <span className="emergency-name">{c.name}</span>
+                <span className="emergency-phone">{c.phone}</span>
               </a>
             ))}
           </div>
         </div>
       </div>
 
-      {/* 주요 기능 */}
-      <section className="features">
+      {/* 상황 선택 */}
+      <section className="situation-section">
         <div className="section-inner">
-          <h2 className="section-title">주요 서비스</h2>
-          <div className="features-grid">
-            {features.map((feature, i) => (
-              <div
-                key={i}
-                className="feature-card"
-                style={{ '--card-color': feature.color }}
-              >
-                <div className="feature-icon">{feature.icon}</div>
-                <h3 className="feature-title">{feature.title}</h3>
-                <p className="feature-desc">{feature.description}</p>
-                <Link to={feature.link} className="feature-link">
-                  {feature.linkText} →
-                </Link>
+          <div className="section-header">
+            <h2 className="section-title">지금 어떤 상황이신가요?</h2>
+            <p className="section-subtitle">해당하는 상황을 선택하면 지금 당장 해야 할 일을 알려드립니다</p>
+          </div>
+          <div className="situation-grid">
+            {situationCards.map((card) => (
+              <Link key={card.id} to={card.link} className="situation-card">
+                <div className="situation-card-top">
+                  <span className={`situation-tag situation-tag--${card.tagType}`}>{card.tag}</span>
+                </div>
+                <h3 className="situation-title">{card.title}</h3>
+                <p className="situation-desc">{card.desc}</p>
+                <span className="situation-action">{card.actionText} →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 위험 신호 */}
+      <section className="warning-section">
+        <div className="section-inner">
+          <div className="section-header">
+            <h2 className="section-title">지금 당장 확인하세요</h2>
+            <p className="section-subtitle">아래 중 하나라도 해당하면 즉시 전문가 상담이 필요합니다</p>
+          </div>
+          <div className="warning-grid">
+            {warningSignals.map((signal, i) => (
+              <div key={i} className="warning-item">
+                <span className="warning-text">{signal}</span>
+              </div>
+            ))}
+          </div>
+          <div className="warning-cta">
+            <Link to="/diagnosis" className="btn btn-primary btn-lg">
+              내 상황 위험도 진단하기
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 절차 안내 */}
+      <section className="process-section">
+        <div className="section-inner">
+          <div className="section-header">
+            <h2 className="section-title">전세사기 피해 대응 절차</h2>
+            <p className="section-subtitle">각 단계별로 언제, 무엇을 해야 하는지 확인하세요</p>
+          </div>
+          <div className="process-steps">
+            {processSteps.map((p) => (
+              <div key={p.step} className="process-step">
+                <div className="process-step-number">{p.step}</div>
+                <div className="process-step-title">{p.title}</div>
+                <div className="process-step-desc">{p.desc}</div>
+                <div className="process-step-timing">{p.timing}</div>
               </div>
             ))}
           </div>
@@ -125,53 +186,10 @@ function HomePage() {
         <div className="section-inner">
           <h2 className="section-title">전세사기 현황</h2>
           <div className="stats-grid">
-            {stats.map((stat, i) => (
-              <div key={i} className="stat-item">
-                <span className="stat-value">{stat.value}</span>
-                <span className="stat-label">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 위험 신호 */}
-      <section className="warning-section">
-        <div className="section-inner">
-          <h2 className="section-title">이런 상황이라면 즉시 확인하세요</h2>
-          <div className="warning-grid">
-            {warningSignals.map((signal, i) => (
-              <div key={i} className="warning-item">
-                <span className="warning-icon">⚠️</span>
-                <span className="warning-text">{signal}</span>
-              </div>
-            ))}
-          </div>
-          <div className="warning-cta">
-            <Link to="/diagnosis" className="btn btn-danger btn-lg">
-              지금 바로 위험도 진단하기
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 절차 안내 */}
-      <section className="process-section">
-        <div className="section-inner">
-          <h2 className="section-title">전세사기 대응 절차</h2>
-          <div className="process-steps">
-            {[
-              { step: '01', title: '대항력 확보', desc: '전입신고 + 확정일자 즉시 취득', icon: '🏠' },
-              { step: '02', title: '상황 파악', desc: '등기부등본 확인, 임대인 연락 시도', icon: '🔍' },
-              { step: '03', title: '임차권등기', desc: '이사가야 할 경우 대항력 유지', icon: '📝' },
-              { step: '04', title: '법적 조치', desc: '내용증명 발송, 소송 또는 신고', icon: '⚖️' },
-              { step: '05', title: '지원 신청', desc: '전세사기특별법 피해자 인정 신청', icon: '🤝' }
-            ].map((step, i) => (
-              <div key={i} className="process-step">
-                <div className="process-step-number">{step.step}</div>
-                <div className="process-step-icon">{step.icon}</div>
-                <h4 className="process-step-title">{step.title}</h4>
-                <p className="process-step-desc">{step.desc}</p>
+            {stats.map((s) => (
+              <div key={s.label} className="stat-item">
+                <span className="stat-value">{s.value}</span>
+                <span className="stat-label">{s.label}</span>
               </div>
             ))}
           </div>
@@ -180,14 +198,17 @@ function HomePage() {
 
       {/* CTA */}
       <section className="cta-section">
-        <div className="section-inner cta-inner">
-          <h2 className="cta-title">지금 바로 AI 상담을 시작하세요</h2>
+        <div className="cta-inner">
+          <h2 className="cta-title">지금 바로 상황을 확인하세요</h2>
           <p className="cta-desc">
-            24시간 무료로 전세사기 전문 AI 법률 상담을 받을 수 있습니다.
+            임차권등기, 보증금 반환 청구, 경매 대응 방법을
+            <br />
+            24시간 무료로 안내합니다.
           </p>
-          <Link to="/chat" className="btn btn-primary btn-xl">
-            무료 AI 상담 시작하기 →
-          </Link>
+          <div className="hero-actions">
+            <Link to="/diagnosis" className="btn btn-cta-primary btn-lg">위험도 진단하기</Link>
+            <Link to="/chat" className="btn btn-cta-secondary btn-lg">법률 상담하기</Link>
+          </div>
         </div>
       </section>
     </div>
