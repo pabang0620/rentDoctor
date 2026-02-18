@@ -37,28 +37,28 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
 
   const QUICK_CATEGORIES = [
     {
-      id: 'date',
-      label: '📅 계약 만료일 기준',
+      id: 'start',
+      label: '어디서 시작하죠?',
       questions: [
-        '계약 만료일이 지났는데 집주인이 보증금을 안 돌려줍니다. 지금 당장 어떻게 해야 하나요?',
-        '계약 만료까지 한 달 남았습니다. 지금부터 준비해야 할 것들을 알려주세요.',
-        '계약 만료 전에 임차권등기명령을 신청할 수 있나요? 만료 후에도 가능한가요?',
-        '계약이 만료됐는데 집주인이 이사 후에 보증금 준다고 합니다. 이사해도 되나요?',
+        '전세사기 피해를 당한 것 같은데 지금 당장 뭘 해야 하나요?',
+        '계약 만료 후 보증금을 못 받고 있습니다. 순서대로 알려주세요.',
+        '지금 임차권등기명령을 신청해야 한다고 하는데, 이게 뭔가요?',
+        '전세사기 피해자 지원을 신청하려면 어떻게 해야 하나요?',
       ]
     },
     {
       id: 'urgent',
-      label: '🚨 긴급 상황',
+      label: '긴급 상황',
       questions: [
-        '집주인이 연락이 끊겼습니다. 보증금 돌려받을 수 있나요?',
-        '경매 통지서를 받았습니다. 배당 신청을 어떻게 해야 하나요?',
-        '이미 집을 비워줬는데 보증금을 못 받고 있습니다.',
-        '집주인이 보증금 반환을 계속 미루고 있습니다. 강제할 방법이 있나요?',
+        '집주인이 연락이 끊겼습니다. 지금 당장 어떻게 해야 하나요?',
+        '경매 통지서를 받았습니다. 보증금을 지킬 수 있나요?',
+        '오늘이 계약 만료일인데 집주인이 보증금을 안 돌려줍니다.',
+        '이미 이사를 나왔는데 보증금을 못 받고 있습니다.',
       ]
     },
     {
-      id: 'legal',
-      label: '📋 법적 절차',
+      id: 'procedure',
+      label: '절차 안내',
       questions: [
         '임차권등기명령 신청 방법과 필요한 서류를 알려주세요.',
         'HUG 전세보증보험 청구 절차를 단계별로 알려주세요.',
@@ -67,12 +67,13 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
       ]
     },
     {
-      id: 'basic',
-      label: '🔍 기본 확인',
+      id: 'terms',
+      label: '용어 설명',
       questions: [
-        '확정일자와 전입신고를 아직 못 했습니다. 지금 해도 효력이 있나요?',
-        '전세사기 피해자 지원 특별법으로 받을 수 있는 혜택이 뭔가요?',
-        '등기부등본에서 위험 신호를 어떻게 확인하나요?',
+        '임차권등기명령이 뭔가요? 신청하면 어떤 효과가 있나요?',
+        '확정일자와 전입신고의 차이가 뭔가요? 둘 다 해야 하나요?',
+        '대항력이 뭔가요? 내가 대항력을 갖고 있는지 어떻게 확인하나요?',
+        'HUG 전세보증보험이 뭔가요? 지금도 가입할 수 있나요?',
       ]
     }
   ]
@@ -88,8 +89,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
     <div className="chat-interface">
       <div className="chat-toolbar">
         <div className="chat-toolbar-info">
-          <span className="chat-status-dot"></span>
-          <span className="chat-status-text">AI 상담사 연결됨</span>
+          <span className="chat-toolbar-title">법률 상담</span>
         </div>
         <button
           className="chat-clear-btn"
@@ -107,7 +107,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
             className={`chat-message chat-message--${message.role}`}
           >
             {message.role === 'assistant' && (
-              <div className="chat-avatar chat-avatar--ai">⚖️</div>
+              <div className="chat-avatar chat-avatar--ai">법</div>
             )}
             <div className="chat-bubble-wrapper">
               <div className={`chat-bubble ${message.isStreaming ? 'chat-bubble--streaming' : ''}`}>
@@ -132,7 +132,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
 
         {isLoading && !isStreaming && (
           <div className="chat-message chat-message--assistant">
-            <div className="chat-avatar chat-avatar--ai">⚖️</div>
+            <div className="chat-avatar chat-avatar--ai">법</div>
             <div className="chat-bubble-wrapper">
               <div className="chat-bubble">
                 <div className="chat-typing">
@@ -156,35 +156,33 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
 
       {messages.length <= 1 && (
         <div className="chat-quick-questions">
-          <p className="chat-quick-label">상황을 선택하면 바로 질문할 수 있어요</p>
-          <div className="chat-quick-categories">
+          <p className="chat-quick-label">자주 묻는 질문</p>
+          <div className="chat-quick-tabs">
             {QUICK_CATEGORIES.map((category) => (
-              <div key={category.id} className="chat-quick-category">
-                <button
-                  className={`chat-quick-category-btn chat-quick-category-btn--${category.id} ${openCategory === category.id ? 'active' : ''}`}
-                  onClick={() => setOpenCategory(openCategory === category.id ? null : category.id)}
-                  disabled={isLoading}
-                >
-                  <span>{category.label}</span>
-                  <span className="chat-quick-arrow">{openCategory === category.id ? '▲' : '▼'}</span>
-                </button>
-                {openCategory === category.id && (
-                  <div className="chat-quick-dropdown">
-                    {category.questions.map((question, idx) => (
-                      <button
-                        key={idx}
-                        className="chat-quick-item"
-                        onClick={() => handleQuickQuestion(question)}
-                        disabled={isLoading}
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <button
+                key={category.id}
+                className={`chat-quick-tab ${openCategory === category.id ? 'active' : ''}`}
+                onClick={() => setOpenCategory(openCategory === category.id ? null : category.id)}
+                disabled={isLoading}
+              >
+                {category.label}
+              </button>
             ))}
           </div>
+          {openCategory && (
+            <div className="chat-quick-list">
+              {QUICK_CATEGORIES.find(c => c.id === openCategory)?.questions.map((question, idx) => (
+                <button
+                  key={idx}
+                  className="chat-quick-item"
+                  onClick={() => handleQuickQuestion(question)}
+                  disabled={isLoading}
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -216,7 +214,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
           </button>
         </div>
         <p className="chat-disclaimer">
-          ⚠️ AI 상담은 법률 정보 제공 목적입니다. 실제 소송은 <strong>대한법률구조공단(132)</strong>에 문의하세요.
+          법률 정보 제공 목적입니다. 실제 소송은 <strong>대한법률구조공단(132)</strong>에 문의하세요.
         </p>
       </form>
     </div>
