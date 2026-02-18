@@ -1,0 +1,16 @@
+{
+  "name": "jeonse-lawyer-crawlers",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "전세사기 법령 및 판례 크롤러",
+  "scripts": {
+    "crawl:laws": "node crawl-laws-api.js",
+    "crawl:cases": "node crawl-cases.js",
+    "crawl:all": "node crawl-laws-api.js && node crawl-cases.js"
+  },
+  "dependencies": {
+    "playwright": "^1.58.2",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0"
+  }
+}

@@ -1,0 +1,4 @@
+/* App 전역 스타일 */
+main {
+  min-height: calc(100vh - 64px);
+}

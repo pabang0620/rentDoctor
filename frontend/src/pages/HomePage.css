@@ -1,0 +1,512 @@
+.home-page {
+  min-height: 100vh;
+}
+
+/* 공통 버튼 스타일 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn-lg {
+  padding: 0.875rem 1.75rem;
+  font-size: 1rem;
+}
+
+.btn-xl {
+  padding: 1.125rem 2.5rem;
+  font-size: 1.125rem;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--color-white);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c81e1e;
+  color: white;
+}
+
+/* 히어로 */
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
+  color: white;
+  padding: 5rem 1.5rem;
+  text-align: center;
+}
+
+.hero-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 0.375rem 1rem;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 1.25rem;
+}
+
+.hero-title-highlight {
+  color: #93c5fd;
+}
+
+.hero-desc {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.hero-disclaimer {
+  font-size: 0.8125rem;
+  opacity: 0.7;
+}
+
+/* 긴급 연락처 배너 */
+.emergency-banner {
+  background: #7f1d1d;
+  color: white;
+  padding: 1rem 1.5rem;
+}
+
+.emergency-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.emergency-label {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  flex-shrink: 0;
+}
+
+.emergency-contacts {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.emergency-contact {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  padding: 0.375rem 0.875rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--border-radius);
+  transition: background 0.15s ease;
+}
+
+.emergency-contact:hover {
+  background: rgba(255,255,255,0.2);
+  text-decoration: none;
+}
+
+.emergency-name {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  color: white;
+}
+
+.emergency-phone {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+/* 섹션 공통 */
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  color: var(--color-text);
+}
+
+/* 주요 기능 */
+.features {
+  background: var(--color-white);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-card {
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--card-color, #f9fafb);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+.feature-desc {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.feature-link {
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+/* 통계 */
+.stats-section {
+  background: var(--color-bg);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* 위험 신호 */
+.warning-section {
+  background: #fff7ed;
+  border-top: 2px solid #fed7aa;
+  border-bottom: 2px solid #fed7aa;
+}
+
+.warning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.875rem;
+  margin-bottom: 2rem;
+}
+
+.warning-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--color-white);
+  border: 1px solid #fed7aa;
+  border-radius: var(--border-radius);
+}
+
+.warning-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.warning-text {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.warning-cta {
+  text-align: center;
+}
+
+/* 절차 안내 */
+.process-section {
+  background: var(--color-white);
+}
+
+.process-steps {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+/* Hide scrollbar on process steps */
+.process-steps::-webkit-scrollbar {
+  height: 4px;
+}
+.process-steps::-webkit-scrollbar-thumb {
+  background: var(--color-primary-light);
+  border-radius: 2px;
+}
+
+.process-step {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  position: relative;
+}
+
+.process-step:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -10px;
+  top: 2.5rem;
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  z-index: 1;
+}
+
+.process-step-number {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.process-step-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.process-step-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--color-text);
+}
+
+.process-step-desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* CTA */
+.cta-section {
+  background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+  color: white;
+}
+
+.cta-inner {
+  text-align: center;
+  padding: 5rem 1.5rem;
+}
+
+.cta-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.cta-desc {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .process-steps {
+    flex-direction: column;
+  }
+
+  .process-step:not(:last-child)::after {
+    content: '↓';
+    right: auto;
+    top: auto;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .emergency-banner-inner {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-item {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+
+  .section-inner {
+    padding: 2.5rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1.375rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .warning-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-inner {
+    padding: 3rem 1rem;
+  }
+
+  .cta-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2.5rem 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    gap: 0.75rem;
+  }
+
+  .btn-xl {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .emergency-contacts {
+    gap: 0.5rem;
+  }
+
+  .emergency-contact {
+    padding: 0.25rem 0.625rem;
+  }
+
+  .emergency-phone {
+    font-size: 0.875rem;
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "laws": [
+    {
+      "id": "housing-lease-protection-act",
+      "name": "주택임대차보호법",
+      "shortName": "주임법",
+      "searchUrl": "https://www.law.go.kr/lsSc.do?section=&menuId=1&subMenuId=15&tabMenuId=81&eventGubun=060101&query=%EC%A3%BC%ED%83%9D%EC%9E%84%EB%8C%80%EC%B0%A8%EB%B3%B4%ED%98%B8%EB%B2%95#undefined",
+      "directUrl": "https://www.law.go.kr/법령/주택임대차보호법",
+      "keywords": [
+        "대항력",
+        "우선변제권",
+        "최우선변제권",
+        "확정일자",
+        "전입신고",
+        "보증금",
+        "임대차",
+        "임차인",
+        "임대인",
+        "계약갱신",
+        "묵시적갱신",
+        "소액임차인",
+        "경매",
+        "배당",
+        "임차권등기"
+      ],
+      "articles": [],
+      "crawledAt": "2026-02-18T04:27:09.836Z"
+    },
+    {
+      "id": "housing-lease-enforcement-decree",
+      "name": "주택임대차보호법 시행령",
+      "shortName": "주임법시행령",
+      "directUrl": "https://www.law.go.kr/법령/주택임대차보호법시행령",
+      "keywords": [
+        "최우선변제",
+        "소액보증금",
+        "기준금액",
+        "서울",
+        "수도권",
+        "광역시",
+        "보증금상한",
+        "금액기준"
+      ],
+      "articles": [],
+      "crawledAt": "2026-02-18T04:27:15.311Z"
+    },
+    {
+      "id": "jeonse-fraud-special-act",
+      "name": "전세사기피해자 지원 및 주거안정에 관한 특별법",
+      "shortName": "전세사기특별법",
+      "directUrl": "https://www.law.go.kr/법령/전세사기피해자지원및주거안정에관한특별법",
+      "keywords": [
+        "전세사기",
+        "피해자",
+        "특별법",
+        "우선매수권",
+        "경공매",
+        "긴급복지",
+        "저리대출",
+        "피해인정",
+        "LH",
+        "공공임대",
+        "주거지원",
+        "금융지원"
+      ],
+      "articles": [],
+      "crawledAt": "2026-02-18T04:27:20.777Z"
+    },
+    {
+      "id": "lease-registration-cmd",
+      "name": "주택임대차보호법 임차권등기명령",
+      "shortName": "임차권등기",
+      "directUrl": "https://www.law.go.kr/법령/주택임대차보호법#A0003",
+      "keywords": [
+        "임차권등기",
+        "등기명령",
+        "신청서류",
+        "관할법원",
+        "대항력유지",
+        "이사",
+        "주민등록말소"
+      ],
+      "articles": [],
+      "crawledAt": "2026-02-18T04:27:26.255Z"
+    }
+  ]
+}
