@@ -408,7 +408,7 @@
 .process-step-desc {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  line-height: 1.4;
+  line-height: 1.55;
 }
 
 /* CTA */
@@ -602,13 +602,13 @@
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: -0.01em;
-  line-height: 1.4;
+  line-height: 1.55;
 }
 
 .situation-desc {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
-  line-height: 1.55;
+  line-height: 1.65;
   flex: 1;
 }
 
