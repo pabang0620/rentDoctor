@@ -123,7 +123,6 @@ function getImmediateActions(checks, riskScore, contractInfo) {
           '법원 도착 후 "임차권등기명령 신청하러 왔습니다"라고 말하면 직원이 안내합니다 (인지대 약 15,000원)',
           '접수 후 약 1~2주 내 등기부등본에 임차권이 등록됩니다'
         ],
-        contact: { name: '대법원 전자소송', phone: '1588-0090' }
       })
       if (!checks.noHugInsurance) {
         actions.push({
@@ -206,8 +205,7 @@ function getImmediateActions(checks, riskScore, contractInfo) {
           '신청 방법: ①인터넷 — 대법원 전자소송(ecfs.scourt.go.kr) / ②직접 방문 — 집 주소 관할 지방법원 등기과',
           '챙겨갈 서류: 임대차계약서 사본, 주민등록등본, 건물 등기부등본 (각 1통)',
           '"임차권등기명령 신청하러 왔습니다"라고 말하면 됩니다 (인지대 약 15,000원)'
-        ],
-        contact: { name: '대법원 전자소송', phone: '1588-0090' }
+        ]
       })
     }
   }
@@ -252,32 +250,6 @@ function getImmediateActions(checks, riskScore, contractInfo) {
         '전화 상담과 방문 상담 모두 가능 — 필요 시 소송 비용까지 무료 지원해줍니다'
       ],
       contact: { name: '대한법률구조공단', phone: '132' }
-    })
-    actions.push({
-      title: '전세사기피해지원센터 접수',
-      urgency: 'soon',
-      steps: [
-        '법률·금융·주거 지원을 한 곳에서 받을 수 있습니다',
-        '온라인 신청: jeonse.or.kr 접속 → 피해 신청 / 전화: 1533-2020',
-        '"전세사기 피해자로 지원 신청하고 싶습니다"라고 말하면 담당자가 배정됩니다',
-        '지원 내용: 법률 자문, 긴급 생계비 지원, 임시 주거 연계, 분쟁 조정 등'
-      ],
-      contact: { name: '전세사기피해지원센터', phone: '1533-2020' }
-    })
-  }
-
-  // 6. 형사 고소 검토 (riskScore >= 70)
-  if (riskScore >= 70) {
-    actions.push({
-      title: '형사 고소 검토',
-      urgency: 'check',
-      steps: [
-        '먼저 대한법률구조공단(132)에 상담하여 형사 고소 가능 여부를 확인하세요 — 혼자 진행하면 실수하기 쉽습니다',
-        '고소장 준비: ①피해 사실 정리 ②증거 자료(계약서, 문자, 입금내역 등) ③"사기" 혐의로 작성',
-        '관할 경찰서 민원실 또는 경찰청 전세사기 전담 수사팀(182)에 고소장 접수',
-        '접수 후 사건번호를 받아두세요 — 추후 진행 상황 확인 시 필요합니다'
-      ],
-      contact: { name: '경찰청 전세사기 전담팀', phone: '182' }
     })
   }
 
@@ -375,16 +347,11 @@ router.post('/', diagnosisLimiter, async (req, res, next) => {
 
     // 지원 기관 목록
     const supportAgencies = [
-      { name: '대한법률구조공단', phone: '132', description: '무료 법률 상담 및 소송 지원' },
-      { name: '전세사기피해지원센터', phone: '1533-2020', description: '피해자 원스톱 지원' }
+      { name: '대한법률구조공단', phone: '132', description: '무료 법률 상담 및 소송 지원' }
     ]
 
     if (!checks.noHugInsurance) {
       supportAgencies.push({ name: '주택도시보증공사(HUG)', phone: '1566-9009', description: '전세보증보험 청구' })
-    }
-
-    if (riskScore >= 70) {
-      supportAgencies.push({ name: '경찰청 전세사기 전담팀', phone: '182', description: '형사 고소 접수' })
     }
 
     // AI 분석 (선택적)
