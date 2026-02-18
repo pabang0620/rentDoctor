@@ -68,7 +68,7 @@ export async function generateStreamingResponse(messages, userMessage, onChunk, 
     history: toGeminiHistory(messages),
   })
 
-  const stream = chat.sendMessageStream({ message: userMessage })
+  const stream = await chat.sendMessageStream({ message: userMessage })
 
   let fullText = ''
   for await (const chunk of stream) {

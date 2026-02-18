@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { chatAPI } from '../services/api.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const RISK_LEVEL_KO = {
   '낮음': '낮음',
@@ -35,6 +36,7 @@ function buildDiagnosisContextString(diagnosis) {
  * 채팅 기능 커스텀 훅
  */
 export function useChat() {
+  const { user } = useAuth()
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -158,9 +160,27 @@ export function useChat() {
   /**
    * 초기 웰컴 메시지 (진단 컨텍스트 있으면 맞춤형으로)
    */
-  const initializeChat = useCallback((diagnosis = null) => {
+  const initializeChat = useCallback(async (diagnosis = null) => {
     diagnosisContextRef.current = diagnosis
     isFirstMessageRef.current = true
+
+    // 로그인 사용자 & 진단 컨텍스트 없을 때: 이전 대화 이력 불러오기
+    if (user && !diagnosis) {
+      try {
+        const history = await chatAPI.getMyHistory()
+        if (history && history.messages?.length > 0) {
+          const restored = history.messages.map(m => ({
+            id: m.id,
+            role: m.role,
+            content: m.content,
+            timestamp: new Date(m.created_at)
+          }))
+          setSessionId(history.sessionId)
+          setMessages(restored)
+          return
+        }
+      } catch { /* 이력 불러오기 실패 시 기본 웰컴 메시지로 */ }
+    }
 
     let welcomeContent
     if (diagnosis) {
@@ -205,7 +225,7 @@ export function useChat() {
       content: welcomeContent,
       timestamp: new Date()
     }])
-  }, [])
+  }, [user])
 
   return {
     messages,

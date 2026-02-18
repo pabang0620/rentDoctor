@@ -1,22 +1,28 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext.jsx'
 import Header from './components/Header/Header.jsx'
 import HomePage from './pages/HomePage.jsx'
 import ChatPage from './pages/ChatPage.jsx'
 import DiagnosticPage from './pages/DiagnosticPage.jsx'
+import AuthPage from './pages/AuthPage.jsx'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/diagnosis" element={<DiagnosticPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
+      <AuthProvider>
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/diagnosis" element={<DiagnosticPage />} />
+            <Route path="/login" element={<AuthPage mode="login" />} />
+            <Route path="/register" element={<AuthPage mode="register" />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

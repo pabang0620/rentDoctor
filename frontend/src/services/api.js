@@ -1,29 +1,24 @@
 const BASE_URL = '/api'
 
-/**
- * 네트워크/서버 에러를 사람이 읽기 좋은 메시지로 변환
- */
+function getToken() {
+  return localStorage.getItem('token')
+}
+
 function toUserMessage(error) {
   const msg = error?.message || ''
-  if (
-    msg === 'Failed to fetch' ||
-    msg.includes('NetworkError') ||
-    msg.includes('network') ||
-    msg.includes('ECONNREFUSED')
-  ) {
+  if (msg === 'Failed to fetch' || msg.includes('NetworkError') || msg.includes('network') || msg.includes('ECONNREFUSED')) {
     return '서버에 연결할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요.'
   }
   return msg || '알 수 없는 오류가 발생했습니다.'
 }
 
-/**
- * 공통 fetch 래퍼
- */
 async function fetchAPI(endpoint, options = {}) {
+  const token = getToken()
   const url = `${BASE_URL}${endpoint}`
   const config = {
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers
     },
     ...options
@@ -39,9 +34,7 @@ async function fetchAPI(endpoint, options = {}) {
   const text = await response.text()
   let data = {}
   if (text) {
-    try {
-      data = JSON.parse(text)
-    } catch {
+    try { data = JSON.parse(text) } catch {
       throw new Error(`서버 응답을 처리할 수 없습니다. (${response.status})`)
     }
   }
@@ -51,6 +44,32 @@ async function fetchAPI(endpoint, options = {}) {
   }
 
   return data
+}
+
+/**
+ * 인증 API
+ */
+export const authAPI = {
+  register: async (username, password) => {
+    const res = await fetchAPI('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    })
+    return res.data
+  },
+
+  login: async (username, password) => {
+    const res = await fetchAPI('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    })
+    return res.data
+  },
+
+  me: async () => {
+    const res = await fetchAPI('/auth/me')
+    return res.data
+  }
 }
 
 /**
@@ -65,11 +84,15 @@ export const chatAPI = {
   },
 
   sendStreamMessage: async (message, sessionId, onChunk, onDone, onError) => {
+    const token = getToken()
     let response
     try {
       response = await fetch(`${BASE_URL}/chat/stream`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ message, sessionId })
       })
     } catch (networkErr) {
@@ -96,28 +119,25 @@ export const chatAPI = {
         if (done) break
 
         const text = decoder.decode(value)
-        const lines = text.split('\n')
-
-        for (const line of lines) {
+        for (const line of text.split('\n')) {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6))
-              if (data.type === 'chunk') {
-                onChunk(data.text)
-              } else if (data.type === 'done') {
-                onDone(data.sessionId)
-              } else if (data.type === 'error') {
-                onError(new Error(data.message))
-              }
-            } catch {
-              // 개별 라인 파싱 실패 무시
-            }
+              if (data.type === 'chunk') onChunk(data.text)
+              else if (data.type === 'done') onDone(data.sessionId)
+              else if (data.type === 'error') onError(new Error(data.message))
+            } catch { /* 개별 라인 파싱 실패 무시 */ }
           }
         }
       }
     } catch (streamErr) {
       onError(new Error(toUserMessage(streamErr)))
     }
+  },
+
+  getMyHistory: async () => {
+    const res = await fetchAPI('/chat/my-history')
+    return res.data
   },
 
   getSessionHistory: async (sessionId) => {
@@ -145,4 +165,4 @@ export const diagnosisAPI = {
   }
 }
 
-export default { chatAPI, diagnosisAPI }
+export default { authAPI, chatAPI, diagnosisAPI }

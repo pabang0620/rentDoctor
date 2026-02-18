@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext.jsx'
 import './Header.css'
 
 function Header() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   useEffect(() => {
     setIsMenuOpen(false)
@@ -12,6 +15,12 @@ function Header() {
 
   const isActive = (path) => location.pathname === path
   const closeMenu = () => setIsMenuOpen(false)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+    closeMenu()
+  }
 
   return (
     <>
@@ -33,6 +42,16 @@ function Header() {
               <span className="header-contact-label">법률상담</span>
               <span className="header-contact-num">132</span>
             </a>
+
+            {user ? (
+              <div className="header-user">
+                <span className="header-username">{user.username}</span>
+                <button className="header-logout" onClick={handleLogout}>로그아웃</button>
+              </div>
+            ) : (
+              <Link to="/login" className="header-login-btn">로그인</Link>
+            )}
+
             <button
               className={`header-hamburger ${isMenuOpen ? 'open' : ''}`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -50,6 +69,14 @@ function Header() {
             <Link to="/" className={`mobile-nav-link ${isActive('/') ? 'active' : ''}`} onClick={closeMenu}>홈</Link>
             <Link to="/chat" className={`mobile-nav-link ${isActive('/chat') ? 'active' : ''}`} onClick={closeMenu}>상담하기</Link>
             <Link to="/diagnosis" className={`mobile-nav-link ${isActive('/diagnosis') ? 'active' : ''}`} onClick={closeMenu}>위험 진단</Link>
+            {user ? (
+              <div className="mobile-nav-user">
+                <span className="mobile-nav-username">{user.username}님</span>
+                <button className="mobile-nav-logout" onClick={handleLogout}>로그아웃</button>
+              </div>
+            ) : (
+              <Link to="/login" className="mobile-nav-link" onClick={closeMenu}>로그인 / 회원가입</Link>
+            )}
             <div className="mobile-nav-emergency">
               <a href="tel:132" className="mobile-emergency-link">대한법률구조공단 132</a>
               <a href="tel:1533-2020" className="mobile-emergency-link">전세사기피해지원센터 1533-2020</a>

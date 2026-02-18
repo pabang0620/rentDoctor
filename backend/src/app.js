@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 
+import authRouter from './routes/auth.js'
 import chatRouter from './routes/chat.js'
 import diagnosisRouter from './routes/diagnosis.js'
 import legalRouter from './routes/legal.js'
@@ -54,6 +55,7 @@ app.get('/health', (req, res) => {
 })
 
 // API 라우터
+app.use('/api/auth', authRouter)
 app.use('/api/chat', chatRouter)
 app.use('/api/diagnosis', diagnosisRouter)
 app.use('/api/legal', legalRouter)

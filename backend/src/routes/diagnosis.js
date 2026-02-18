@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { analyzeDiagnosis } from '../services/aiService.js'
 import { saveDiagnosis } from '../services/dbService.js'
 import { diagnosisLimiter } from '../middleware/rateLimiter.js'
+import { optionalAuth } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -303,7 +304,7 @@ function analyzeContractDate(contractEndDate) {
  * POST /api/diagnosis
  * 전세사기 피해 진단
  */
-router.post('/', diagnosisLimiter, async (req, res, next) => {
+router.post('/', optionalAuth, diagnosisLimiter, async (req, res, next) => {
   try {
     const { checks, additionalInfo, useAI = false, contractEndDate } = req.body
 
@@ -374,9 +375,10 @@ router.post('/', diagnosisLimiter, async (req, res, next) => {
       contractInfo: contractInfo || undefined
     }
 
-    // DB에 비동기 저장
+    // DB에 비동기 저장 (체크리스트 개별 컬럼으로 저장)
     const { sessionId } = req.body
-    saveDiagnosis(sessionId || null, { checks, additionalInfo }, result).catch(() => {})
+    const userId = req.user?.id || null
+    saveDiagnosis(sessionId || null, checks, contractEndDate, result, userId).catch(() => {})
 
     res.json({
       success: true,
