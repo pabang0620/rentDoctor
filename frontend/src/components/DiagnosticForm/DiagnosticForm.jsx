@@ -30,79 +30,69 @@ const CHECKLIST_ITEMS = [
     key: 'registrationChecked',
     label: '등기부등본 확인',
     description: '계약 전 등기부등본을 열람하여 근저당, 압류, 가처분 등을 확인했다',
-    icon: '📋',
     riskType: 'safe'
   },
   {
     key: 'ownerIdentityVerified',
     label: '집주인 신원 확인',
     description: '등기부등본의 소유자와 임대인이 동일인임을 신분증으로 확인했다',
-    icon: '🪪',
     riskType: 'safe'
   },
   {
     key: 'registrationAndDate',
     label: '전입신고 및 확정일자',
     description: '입주 당일 전입신고를 하고 임대차계약서에 확정일자를 받았다',
-    icon: '🏠',
     riskType: 'safe'
   },
   {
     key: 'highJeonseRate',
     label: '높은 전세가율 (80% 초과)',
     description: '전세보증금이 주택 시세의 80%를 초과한다',
-    icon: '📊',
     riskType: 'danger'
   },
   {
     key: 'mortgageExists',
     label: '근저당권 설정',
     description: '등기부등본에 근저당권, 담보신탁 등이 설정되어 있다',
-    icon: '🏦',
     riskType: 'danger'
   },
   {
     key: 'noHugInsurance',
     label: 'HUG 전세보증보험 미가입',
     description: '주택도시보증공사(HUG) 또는 다른 기관의 전세보증보험에 가입하지 않았다',
-    icon: '🛡️',
     riskType: 'danger'
   },
   {
     key: 'taxDelinquency',
     label: '임대인 세금 체납 의심',
     description: '집주인의 세금 납부 여부를 확인했을 때 체납 내역이 있거나 확인이 불가했다',
-    icon: '💸',
     riskType: 'danger'
   },
   {
     key: 'corporateOwner',
     label: '법인 또는 신탁 소유 주택',
     description: '집주인이 법인이거나 신탁 부동산이다',
-    icon: '🏢',
     riskType: 'warning'
   },
   {
     key: 'multiUnitBuilding',
     label: '다세대/빌라/오피스텔',
     description: '거주하는 주택이 다세대주택, 빌라, 오피스텔이다 (아파트 제외)',
-    icon: '🏘️',
     riskType: 'warning'
   },
   {
     key: 'ownerUnreachable',
     label: '임대인 연락 두절 또는 계약 회피',
     description: '집주인이 연락을 받지 않거나, 보증금 반환을 계속 미루고 있다',
-    icon: '📵',
     riskType: 'critical'
   }
 ]
 
 const RISK_CONFIG = {
-  낮음: { color: '#057a55', bg: '#def7ec', label: '낮음', icon: '✅' },
-  중간: { color: '#d97706', bg: '#fef3c7', label: '중간', icon: '⚠️' },
-  높음: { color: '#e02424', bg: '#fde8e8', label: '높음', icon: '🚨' },
-  매우높음: { color: '#7c2d12', bg: '#fee2e2', label: '매우 높음', icon: '‼️' }
+  낮음: { color: '#16a34a', bg: '#f0fdf4', label: '낮음' },
+  중간: { color: '#ca8a04', bg: '#fefce8', label: '중간' },
+  높음: { color: '#dc2626', bg: '#fef2f2', label: '높음' },
+  매우높음: { color: '#991b1b', bg: '#fef2f2', label: '매우 높음' }
 }
 
 function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoading, error, checkedCount, onToggle, onContractEndDateChange, onAdditionalInfoChange, onDiagnose, onReset }) {
@@ -117,7 +107,7 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
   return (
     <div className="diagnostic-form">
       <div className="diagnostic-header">
-        <h2 className="diagnostic-title">전세사기 피해 위험도 진단</h2>
+        <h2 className="diagnostic-title">위험도 진단</h2>
         <p className="diagnostic-desc">
           해당하는 항목에 체크하여 전세사기 피해 가능성을 진단해보세요.
           <br />
@@ -128,7 +118,7 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
       {/* 계약 만료일 입력 */}
       <div className="contract-date-section">
         <label className="contract-date-label">
-          📅 계약 만료일 <span className="contract-date-hint">(입력하면 맞춤 조치를 안내해드려요)</span>
+          계약 만료일 <span className="contract-date-hint">(입력하면 맞춤 조치를 안내해드려요)</span>
         </label>
         <div className="contract-date-row">
           <input
@@ -142,11 +132,6 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
               className="contract-date-status"
               style={{ backgroundColor: contractStatus.bg, color: contractStatus.color }}
             >
-              {contractStatus.type === 'expired' && '⚠️ '}
-              {contractStatus.type === 'today' && '🚨 '}
-              {contractStatus.type === 'urgent' && '⏰ '}
-              {contractStatus.type === 'soon' && '📋 '}
-              {contractStatus.type === 'safe' && '✅ '}
               {contractStatus.label}
             </div>
           )}
@@ -184,7 +169,6 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
                 />
                 <div className="checklist-content">
                   <div className="checklist-top">
-                    <span className="checklist-icon">{item.icon}</span>
                     <span className="checklist-label">{item.label}</span>
                     <span className={`checklist-badge checklist-badge--${item.riskType}`}>
                       {item.riskType === 'safe' ? '안전' :
@@ -225,9 +209,7 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
               진단 중...
             </>
           ) : (
-            <>
-              🔍 위험도 진단하기
-            </>
+            <>위험도 진단하기</>
           )}
         </button>
         <button
@@ -259,14 +241,13 @@ function DiagnosticResult({ result }) {
     <div className="diagnostic-result">
       {result.contractInfo && (
         <div className={`result-contract-badge result-contract-badge--${result.contractInfo.status}`}>
-          📅 {result.contractInfo.label}
+          {result.contractInfo.label}
         </div>
       )}
       <div
         className="result-header"
         style={{ backgroundColor: riskConfig.bg, borderColor: riskConfig.color }}
       >
-        <div className="result-icon">{riskConfig.icon}</div>
         <div className="result-title-group">
           <h3 className="result-title" style={{ color: riskConfig.color }}>
             위험도: {riskConfig.label}
@@ -290,7 +271,7 @@ function DiagnosticResult({ result }) {
 
       {result.mainRisks && result.mainRisks.length > 0 && (
         <div className="result-section">
-          <h4 className="result-section-title">🚨 주요 위험 요소</h4>
+          <h4 className="result-section-title result-section-title--danger">주요 위험 요소</h4>
           <ul className="result-list result-list--danger">
             {result.mainRisks.map((risk, i) => (
               <li key={i}>{risk}</li>
@@ -301,7 +282,7 @@ function DiagnosticResult({ result }) {
 
       {result.immediateActions && result.immediateActions.length > 0 && (
         <div className="result-section">
-          <h4 className="result-section-title">✅ 즉시 해야 할 행동</h4>
+          <h4 className="result-section-title result-section-title--action">즉시 해야 할 행동</h4>
           <ol className="result-list result-list--action">
             {result.immediateActions.map((action, i) => (
               <li key={i}>{action}</li>
@@ -312,7 +293,7 @@ function DiagnosticResult({ result }) {
 
       {result.supportAgencies && result.supportAgencies.length > 0 && (
         <div className="result-section">
-          <h4 className="result-section-title">📞 연락해야 할 지원 기관</h4>
+          <h4 className="result-section-title result-section-title--contact">연락해야 할 지원 기관</h4>
           <div className="result-agencies">
             {result.supportAgencies.map((agency, i) => (
               <a
@@ -330,7 +311,7 @@ function DiagnosticResult({ result }) {
       )}
 
       <div className="result-disclaimer">
-        ⚠️ 본 진단은 참고용입니다. 정확한 법적 판단을 위해 <strong>대한법률구조공단(132)</strong>에 문의하세요.
+        본 진단은 참고용입니다. 정확한 법적 판단을 위해 <strong>대한법률구조공단(132)</strong>에 문의하세요.
       </div>
     </div>
   )

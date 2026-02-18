@@ -30,7 +30,6 @@ function DiagnosticPage() {
           </div>
           <div className="diagnostic-page-info">
             <div className="info-card">
-              <span className="info-icon">⚠️</span>
               <div>
                 <p className="info-title">진단이 어렵다면</p>
                 <p className="info-text">
@@ -39,7 +38,6 @@ function DiagnosticPage() {
               </div>
             </div>
             <div className="info-card">
-              <span className="info-icon">📞</span>
               <div>
                 <p className="info-title">긴급 법률 상담</p>
                 <a href="tel:132" className="info-phone">대한법률구조공단 132</a>
@@ -67,7 +65,7 @@ function DiagnosticPage() {
           <div className="diagnostic-page-next">
             <p className="next-text">진단 결과에 대해 더 자세한 설명이 필요하신가요?</p>
             <Link to="/chat" className="next-btn">
-              AI 상담사에게 질문하기 →
+              추가 상담하기 →
             </Link>
           </div>
         )}
