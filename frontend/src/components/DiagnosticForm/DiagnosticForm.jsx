@@ -395,7 +395,8 @@ function DiagnosticResult({ result }) {
       )}
 
       <div className="result-disclaimer">
-        본 진단은 참고용입니다. 정확한 법적 판단을 위해 <strong>대한법률구조공단(132)</strong>에 문의하세요.
+        <p>본 진단은 참고용이며 법적 효력이 없습니다. 정확한 판단은 <strong>대한법률구조공단(132)</strong>에 문의하세요.</p>
+        <p className="result-disclaimer-note">안내된 비용(인지대·보험료율 등)·가입 조건·연락처는 변경될 수 있습니다. 신청 전 해당 기관에 직접 확인하세요.</p>
       </div>
     </div>
   )

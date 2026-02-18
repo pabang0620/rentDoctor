@@ -439,6 +439,13 @@
   line-height: 1.7;
 }
 
+.stats-note {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
 /* 반응형 */
 @media (max-width: 1024px) {
   .stats-grid {

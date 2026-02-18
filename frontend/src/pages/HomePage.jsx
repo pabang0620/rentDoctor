@@ -193,6 +193,7 @@ function HomePage() {
               </div>
             ))}
           </div>
+          <p className="stats-note">※ 통계는 2023년 공개 자료 기준입니다. 최신 현황은 국토교통부·HUG 공식 채널에서 확인하세요.</p>
         </div>
       </section>
 

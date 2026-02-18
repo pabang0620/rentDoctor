@@ -55,6 +55,8 @@ function DiagnosticPage() {
           </ol>
         </div>
 
+        <p className="diagnostic-info-note">※ 안내된 비용·가입 조건·연락처는 변경될 수 있습니다. 중요한 사항은 반드시 해당 기관에 직접 확인하세요.</p>
+
         <DiagnosticForm
           checks={checks}
           contractEndDate={contractEndDate}
