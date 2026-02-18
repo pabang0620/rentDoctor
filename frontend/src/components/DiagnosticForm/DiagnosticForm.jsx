@@ -105,7 +105,7 @@ const RISK_CONFIG = {
   매우높음: { color: '#991b1b', bg: '#fef2f2', label: '매우 높음' }
 }
 
-function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoading, error, checkedCount, onToggle, onContractEndDateChange, onAdditionalInfoChange, onDiagnose, onReset }) {
+function DiagnosticForm({ checks, contractEndDate, result, isLoading, error, checkedCount, onToggle, onContractEndDateChange, onDiagnose, onReset }) {
 
   const contractStatus = useMemo(() => getContractStatus(contractEndDate), [contractEndDate])
   const [expandedHints, setExpandedHints] = useState({})
@@ -226,19 +226,6 @@ function DiagnosticForm({ checks, contractEndDate, additionalInfo, result, isLoa
             )
           })}
         </div>
-      </div>
-
-      <div className="diagnostic-additional">
-        <label className="additional-label">추가 상황 설명 (선택)</label>
-        <textarea
-          className="additional-textarea"
-          value={additionalInfo}
-          onChange={(e) => onAdditionalInfoChange(e.target.value)}
-          placeholder="현재 상황을 자세히 설명해주시면 더 정확한 진단이 가능합니다."
-          rows={3}
-          maxLength={1000}
-        />
-        <p className="additional-count">{additionalInfo.length}/1000</p>
       </div>
 
       <div className="diagnostic-actions">

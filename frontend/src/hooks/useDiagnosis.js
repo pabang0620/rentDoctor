@@ -20,7 +20,6 @@ const INITIAL_CHECKS = {
 export function useDiagnosis() {
   const [checks, setChecks] = useState(INITIAL_CHECKS)
   const [contractEndDate, setContractEndDate] = useState('')
-  const [additionalInfo, setAdditionalInfo] = useState('')
   const [result, setResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -38,20 +37,20 @@ export function useDiagnosis() {
   /**
    * 진단 실행
    */
-  const runDiagnosis = useCallback(async (useAI = false) => {
+  const runDiagnosis = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     setResult(null)
 
     try {
-      const response = await diagnosisAPI.diagnose(checks, additionalInfo, useAI, contractEndDate)
+      const response = await diagnosisAPI.diagnose(checks, contractEndDate)
       setResult(response.data)
     } catch (err) {
       setError(err.message || '진단 중 오류가 발생했습니다.')
     } finally {
       setIsLoading(false)
     }
-  }, [checks, additionalInfo, contractEndDate])
+  }, [checks, contractEndDate])
 
   /**
    * 진단 초기화
@@ -59,7 +58,6 @@ export function useDiagnosis() {
   const resetDiagnosis = useCallback(() => {
     setChecks(INITIAL_CHECKS)
     setContractEndDate('')
-    setAdditionalInfo('')
     setResult(null)
     setError(null)
   }, [])
@@ -73,8 +71,6 @@ export function useDiagnosis() {
     checks,
     contractEndDate,
     setContractEndDate,
-    additionalInfo,
-    setAdditionalInfo,
     result,
     isLoading,
     error,

@@ -1,6 +1,36 @@
 import { useState, useCallback, useRef } from 'react'
 import { chatAPI } from '../services/api.js'
 
+const RISK_LEVEL_KO = {
+  '낮음': '낮음',
+  '중간': '중간',
+  '높음': '높음',
+  '매우높음': '매우 높음'
+}
+
+/**
+ * 진단 결과를 AI에게 전달할 컨텍스트 문자열로 변환
+ */
+function buildDiagnosisContextString(diagnosis) {
+  const level = RISK_LEVEL_KO[diagnosis.riskLevel] || diagnosis.riskLevel
+  const lines = [
+    `[사용자 위험도 진단 결과]`,
+    `위험도: ${level} (${diagnosis.riskScore}점 / 100점)`,
+  ]
+  if (diagnosis.contractInfo) {
+    lines.push(`계약 상태: ${diagnosis.contractInfo.label}`)
+  }
+  if (diagnosis.mainRisks?.length) {
+    lines.push(`주요 위험 요소:`)
+    diagnosis.mainRisks.forEach(r => lines.push(`  - ${r}`))
+  }
+  if (diagnosis.summary) {
+    lines.push(`요약: ${diagnosis.summary}`)
+  }
+  lines.push(`\n위 진단 결과를 참고하여 아래 질문에 답변해 주세요.`)
+  return lines.join('\n')
+}
+
 /**
  * 채팅 기능 커스텀 훅
  */
@@ -11,6 +41,8 @@ export function useChat() {
   const [sessionId, setSessionId] = useState(null)
   const [isStreaming, setIsStreaming] = useState(false)
   const streamingMessageRef = useRef('')
+  const diagnosisContextRef = useRef(null)
+  const isFirstMessageRef = useRef(true)
 
   /**
    * 메시지 추가 헬퍼
@@ -49,7 +81,15 @@ export function useChat() {
     setError(null)
     setIsLoading(true)
 
-    // 사용자 메시지 추가
+    // 첫 메시지에 진단 컨텍스트 주입
+    let messageToSend = text
+    if (diagnosisContextRef.current && isFirstMessageRef.current) {
+      isFirstMessageRef.current = false
+      const ctx = buildDiagnosisContextString(diagnosisContextRef.current)
+      messageToSend = `${ctx}\n\n${text}`
+    }
+
+    // 사용자 메시지 추가 (UI엔 원본 텍스트만 표시)
     addMessage('user', text)
 
     // 스트리밍 응답을 위한 빈 AI 메시지 추가
@@ -64,7 +104,7 @@ export function useChat() {
     }])
 
     await chatAPI.sendStreamMessage(
-      text,
+      messageToSend,
       sessionId,
       (chunk) => {
         streamingMessageRef.current += chunk
@@ -116,13 +156,33 @@ export function useChat() {
   }, [sessionId])
 
   /**
-   * 초기 웰컴 메시지
+   * 초기 웰컴 메시지 (진단 컨텍스트 있으면 맞춤형으로)
    */
-  const initializeChat = useCallback(() => {
-    setMessages([{
-      id: 'welcome',
-      role: 'assistant',
-      content: `안녕하세요. 전세사기 피해 법률 상담 서비스입니다.
+  const initializeChat = useCallback((diagnosis = null) => {
+    diagnosisContextRef.current = diagnosis
+    isFirstMessageRef.current = true
+
+    let welcomeContent
+    if (diagnosis) {
+      const level = RISK_LEVEL_KO[diagnosis.riskLevel] || diagnosis.riskLevel
+      const contractNote = diagnosis.contractInfo
+        ? `\n- **계약 상태:** ${diagnosis.contractInfo.label}`
+        : ''
+      const risksNote = diagnosis.mainRisks?.length
+        ? `\n\n**확인된 위험 요소:**\n${diagnosis.mainRisks.map(r => `- ${r}`).join('\n')}`
+        : ''
+
+      welcomeContent = `위험도 진단 결과를 확인했습니다.
+
+- **위험도:** ${level} (${diagnosis.riskScore}점 / 100점)${contractNote}${risksNote}
+
+진단 결과를 바탕으로 궁금한 내용을 질문해 주세요. 임차권등기명령 신청 방법, 내용증명 작성, HUG 보험 청구 절차 등 무엇이든 답변해 드립니다.
+
+---
+
+무료 법률 상담이 필요하시면 **대한법률구조공단 132**로 전화하세요.`
+    } else {
+      welcomeContent = `안녕하세요. 전세사기 피해 법률 상담 서비스입니다.
 
 처음이라 어디서부터 시작해야 할지 막막하시죠. 지금 어떤 상황인지 편하게 말씀해 주시면 지금 당장 해야 할 일을 단계별로 안내해 드리겠습니다.
 
@@ -136,7 +196,13 @@ export function useChat() {
 
 ---
 
-무료 법률 상담이 필요하시면 **대한법률구조공단 132**로 전화하세요.`,
+무료 법률 상담이 필요하시면 **대한법률구조공단 132**로 전화하세요.`
+    }
+
+    setMessages([{
+      id: 'welcome',
+      role: 'assistant',
+      content: welcomeContent,
       timestamp: new Date()
     }])
   }, [])

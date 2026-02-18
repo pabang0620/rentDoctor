@@ -133,10 +133,10 @@ export const chatAPI = {
  * 진단 API
  */
 export const diagnosisAPI = {
-  diagnose: async (checks, additionalInfo = '', useAI = false, contractEndDate = '') => {
+  diagnose: async (checks, contractEndDate = '') => {
     return fetchAPI('/diagnosis', {
       method: 'POST',
-      body: JSON.stringify({ checks, additionalInfo, useAI, contractEndDate })
+      body: JSON.stringify({ checks, contractEndDate })
     })
   },
 

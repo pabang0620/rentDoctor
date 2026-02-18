@@ -1,15 +1,14 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import DiagnosticForm from '../components/DiagnosticForm/DiagnosticForm.jsx'
 import useDiagnosis from '../hooks/useDiagnosis.js'
 import './DiagnosticPage.css'
 
 function DiagnosticPage() {
+  const navigate = useNavigate()
   const {
     checks,
     contractEndDate,
     setContractEndDate,
-    additionalInfo,
-    setAdditionalInfo,
     result,
     isLoading,
     error,
@@ -18,6 +17,13 @@ function DiagnosticPage() {
     runDiagnosis,
     resetDiagnosis
   } = useDiagnosis()
+
+  const handleGoToChat = () => {
+    if (result) {
+      sessionStorage.setItem('diagnosisContext', JSON.stringify(result))
+    }
+    navigate('/chat')
+  }
 
   return (
     <div className="diagnostic-page">
@@ -60,14 +66,12 @@ function DiagnosticPage() {
         <DiagnosticForm
           checks={checks}
           contractEndDate={contractEndDate}
-          additionalInfo={additionalInfo}
           result={result}
           isLoading={isLoading}
           error={error}
           checkedCount={checkedCount}
           onToggle={toggleCheck}
           onContractEndDateChange={setContractEndDate}
-          onAdditionalInfoChange={setAdditionalInfo}
           onDiagnose={runDiagnosis}
           onReset={resetDiagnosis}
         />
@@ -75,9 +79,9 @@ function DiagnosticPage() {
         {result && (
           <div className="diagnostic-page-next">
             <p className="next-text">진단 결과에 대해 더 자세한 설명이 필요하신가요?</p>
-            <Link to="/chat" className="next-btn">
+            <button className="next-btn" onClick={handleGoToChat}>
               추가 상담하기 →
-            </Link>
+            </button>
           </div>
         )}
       </div>

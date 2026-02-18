@@ -15,7 +15,15 @@ function ChatPage() {
   } = useChat()
 
   useEffect(() => {
-    initializeChat()
+    let diagnosis = null
+    const saved = sessionStorage.getItem('diagnosisContext')
+    if (saved) {
+      try {
+        diagnosis = JSON.parse(saved)
+      } catch { /* ignore */ }
+      sessionStorage.removeItem('diagnosisContext')
+    }
+    initializeChat(diagnosis)
   }, [])
 
   return (
