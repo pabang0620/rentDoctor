@@ -2,6 +2,24 @@ import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import './ChatInterface.css'
 
+function parseErrorMessage(error) {
+  if (!error) return ''
+  // 날 JSON 문자열인 경우 파싱 시도
+  try {
+    const parsed = JSON.parse(error)
+    const code = parsed?.error?.code
+    if (code === 429) return 'AI 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.'
+    if (parsed?.error?.message) return 'AI 응답 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+  } catch {
+    // JSON이 아니면 그대로 사용
+  }
+  // 너무 길거나 JSON처럼 보이면 대체 메시지
+  if (error.length > 200 || error.startsWith('{')) {
+    return 'AI 응답 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+  }
+  return error
+}
+
 function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage, onClearChat }) {
   const [inputText, setInputText] = useState('')
   const [openCategory, setOpenCategory] = useState(null)
@@ -151,7 +169,7 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
 
         {error && (
           <div className="chat-error">
-            <span>오류: {error}</span>
+            <span>{parseErrorMessage(error)}</span>
           </div>
         )}
 

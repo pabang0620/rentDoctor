@@ -9,6 +9,31 @@ function getAI() {
   return _ai
 }
 
+/**
+ * Gemini API 에러를 사용자 친화적 메시지로 변환
+ */
+function parseGeminiError(err) {
+  try {
+    const body = JSON.parse(err.message)
+    const code = body?.error?.code
+    if (code === 429) {
+      return new Error('AI 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.')
+    }
+    if (code === 400) {
+      return new Error('요청이 올바르지 않습니다. 다시 시도해주세요.')
+    }
+    if (code >= 500) {
+      return new Error('AI 서비스에 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+    }
+  } catch {
+    // err.message가 JSON이 아닌 경우
+  }
+  if (err.status === 429 || err.code === 429) {
+    return new Error('AI 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.')
+  }
+  return new Error('AI 응답 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+}
+
 const MODEL = 'gemini-2.0-flash-lite'
 
 // 할루시네이션 최소화 생성 설정
@@ -49,8 +74,12 @@ export async function generateChatResponse(messages, userMessage) {
     history: toGeminiHistory(messages),
   })
 
-  const response = await chat.sendMessage({ message: userMessage })
-  return response.text
+  try {
+    const response = await chat.sendMessage({ message: userMessage })
+    return response.text
+  } catch (err) {
+    throw parseGeminiError(err)
+  }
 }
 
 /**
@@ -68,18 +97,22 @@ export async function generateStreamingResponse(messages, userMessage, onChunk, 
     history: toGeminiHistory(messages),
   })
 
-  const stream = await chat.sendMessageStream({ message: userMessage })
+  try {
+    const stream = await chat.sendMessageStream({ message: userMessage })
 
-  let fullText = ''
-  for await (const chunk of stream) {
-    const text = chunk.text
-    if (text) {
-      fullText += text
-      onChunk(text)
+    let fullText = ''
+    for await (const chunk of stream) {
+      const text = chunk.text
+      if (text) {
+        fullText += text
+        onChunk(text)
+      }
     }
-  }
 
-  onComplete(fullText)
+    onComplete(fullText)
+  } catch (err) {
+    throw parseGeminiError(err)
+  }
 }
 
 /**
@@ -109,14 +142,19 @@ JSON 형식으로만 응답해주세요 (다른 텍스트 없이):
   "summary": "종합 의견 (2-3문장)"
 }`
 
-  const response = await getAI().models.generateContent({
-    model: MODEL,
-    config: {
-      systemInstruction: SYSTEM_PROMPT,
-      ...DIAGNOSIS_CONFIG,
-    },
-    contents: prompt,
-  })
+  let response
+  try {
+    response = await getAI().models.generateContent({
+      model: MODEL,
+      config: {
+        systemInstruction: SYSTEM_PROMPT,
+        ...DIAGNOSIS_CONFIG,
+      },
+      contents: prompt,
+    })
+  } catch (err) {
+    throw parseGeminiError(err)
+  }
 
   const responseText = response.text
 
