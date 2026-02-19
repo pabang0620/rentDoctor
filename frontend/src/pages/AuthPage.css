@@ -23,7 +23,7 @@
   font-weight: 700;
   color: var(--color-text);
   text-decoration: none;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
 }
 
@@ -31,31 +31,13 @@
   text-decoration: none;
 }
 
-/* 탭 */
-.auth-tabs {
-  display: flex;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  overflow: hidden;
+.auth-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
   margin-bottom: 1.75rem;
-}
-
-.auth-tab {
-  flex: 1;
-  padding: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.12s ease;
-}
-
-.auth-tab.active {
-  background: var(--color-primary);
-  color: white;
-  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 /* 폼 */
@@ -125,14 +107,32 @@
   cursor: not-allowed;
 }
 
-/* 건너뛰기 */
-.auth-skip {
-  margin-top: 1.25rem;
-  text-align: center;
+/* 하단 링크 영역 */
+.auth-bottom {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.auth-bottom-text {
   font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.auth-bottom-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-bottom-link:hover {
+  text-decoration: underline;
 }
 
 .auth-skip-link {
+  font-size: 0.8125rem;
   color: var(--color-text-secondary);
   text-decoration: none;
 }

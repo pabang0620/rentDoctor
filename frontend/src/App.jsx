@@ -4,7 +4,8 @@ import Header from './components/Header/Header.jsx'
 import HomePage from './pages/HomePage.jsx'
 import ChatPage from './pages/ChatPage.jsx'
 import DiagnosticPage from './pages/DiagnosticPage.jsx'
-import AuthPage from './pages/AuthPage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
 import './App.css'
 
 function App() {
@@ -17,8 +18,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/diagnosis" element={<DiagnosticPage />} />
-            <Route path="/login" element={<AuthPage mode="login" />} />
-            <Route path="/register" element={<AuthPage mode="register" />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
