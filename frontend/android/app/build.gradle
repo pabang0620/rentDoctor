@@ -16,9 +16,18 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: "/home/pabang/rentdoctor-release.jks")
+            storePassword System.getenv("KEYSTORE_PASS") ?: "rentdoctor2026"
+            keyAlias System.getenv("KEY_ALIAS") ?: "rentdoctor"
+            keyPassword System.getenv("KEY_PASS") ?: "rentdoctor2026"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
