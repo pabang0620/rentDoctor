@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import QUICK_ANSWERS from '../../data/quickAnswers.js'
 import './ChatInterface.css'
 
 function parseErrorMessage(error) {
@@ -20,7 +21,7 @@ function parseErrorMessage(error) {
   return error
 }
 
-function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage, onClearChat }) {
+function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage, onClearChat, onQuickAnswer }) {
   const [inputText, setInputText] = useState('')
   const [openCategory, setOpenCategory] = useState(null)
   const messagesEndRef = useRef(null)
@@ -49,8 +50,13 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
   }
 
   const handleQuickQuestion = (question) => {
-    onSendMessage(question)
     setOpenCategory(null)
+    const preAnswer = QUICK_ANSWERS[question]
+    if (preAnswer && onQuickAnswer) {
+      onQuickAnswer(question, preAnswer)
+    } else {
+      onSendMessage(question)
+    }
   }
 
   const QUICK_CATEGORIES = [

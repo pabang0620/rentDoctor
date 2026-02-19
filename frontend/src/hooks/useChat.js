@@ -229,6 +229,17 @@ export function useChat() {
     }])
   }, [user])
 
+  /**
+   * 사전 생성 답변 즉시 추가 (API 호출 없음)
+   */
+  const addQuickAnswer = useCallback((question, answer) => {
+    const now = new Date()
+    setMessages(prev => [...prev,
+      { id: Date.now(), role: 'user', content: question, timestamp: now },
+      { id: Date.now() + 1, role: 'assistant', content: answer, timestamp: now },
+    ])
+  }, [])
+
   return {
     messages,
     isLoading,
@@ -237,7 +248,8 @@ export function useChat() {
     sessionId,
     sendMessage,
     clearChat,
-    initializeChat
+    initializeChat,
+    addQuickAnswer
   }
 }
 

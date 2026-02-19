@@ -13,7 +13,8 @@ function ChatPage() {
     error,
     sendMessage,
     clearChat,
-    initializeChat
+    initializeChat,
+    addQuickAnswer
   } = useChat()
   const initialized = useRef(false)
 
@@ -42,6 +43,7 @@ function ChatPage() {
         error={error}
         onSendMessage={sendMessage}
         onClearChat={clearChat}
+        onQuickAnswer={addQuickAnswer}
       />
     </div>
   )
