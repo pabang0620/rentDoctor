@@ -17,7 +17,7 @@ function PrivacyPage() {
         <div className="policy-content">
           <section className="policy-section">
             <h2>1. 수집하는 개인정보</h2>
-            <p>전세지킴이(이하 "서비스")는 다음의 개인정보를 수집합니다.</p>
+            <p>전세닥터(이하 "서비스")는 다음의 개인정보를 수집합니다.</p>
             <ul>
               <li><strong>회원가입 시:</strong> 이메일 주소, 사용자명(닉네임), 비밀번호(암호화 저장)</li>
               <li><strong>서비스 이용 시:</strong> AI와의 대화 내용, 위험도 진단 체크리스트 응답</li>

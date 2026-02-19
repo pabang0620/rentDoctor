@@ -28,7 +28,7 @@ function Header() {
         <div className="header-inner">
           <Link to="/" className="header-logo" onClick={closeMenu}>
             <div className="header-logo-mark"></div>
-            <span className="header-logo-title">전세지킴이</span>
+            <span className="header-logo-title">전세닥터</span>
           </Link>
 
           <nav className="header-nav">

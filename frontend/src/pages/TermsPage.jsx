@@ -21,7 +21,7 @@ function TermsPage() {
         <div className="policy-content">
           <section className="policy-section">
             <h2>제1조 (목적)</h2>
-            <p>본 약관은 전세지킴이(이하 "서비스")가 제공하는 전세사기 피해 법률 정보 상담 서비스의 이용 조건 및 절차, 이용자와 서비스 간의 권리·의무 사항을 규정함을 목적으로 합니다.</p>
+            <p>본 약관은 전세닥터(이하 "서비스")가 제공하는 전세사기 피해 법률 정보 상담 서비스의 이용 조건 및 절차, 이용자와 서비스 간의 권리·의무 사항을 규정함을 목적으로 합니다.</p>
           </section>
 
           <section className="policy-section">

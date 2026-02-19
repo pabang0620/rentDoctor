@@ -29,7 +29,7 @@ function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-box">
-        <Link to="/" className="auth-logo">전세지킴이</Link>
+        <Link to="/" className="auth-logo">전세닥터</Link>
         <h1 className="auth-title">로그인</h1>
 
         <form className="auth-form" onSubmit={handleSubmit}>

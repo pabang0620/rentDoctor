@@ -8,7 +8,7 @@ function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <span className="footer-logo-mark"></span>
-            <span className="footer-brand-name">전세지킴이</span>
+            <span className="footer-brand-name">전세닥터</span>
           </div>
           <p className="footer-disclaimer">
             본 서비스는 <strong>법률 정보 제공 목적</strong>으로 운영되며, AI의 응답은 법적 효력이 없습니다.
@@ -31,7 +31,7 @@ function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="footer-copy">© 2026 전세지킴이. All rights reserved.</p>
+          <p className="footer-copy">© 2026 전세닥터. All rights reserved.</p>
           <div className="footer-policy-links">
             <Link to="/terms" className="footer-policy-link">이용약관</Link>
             <span className="footer-policy-sep">·</span>
