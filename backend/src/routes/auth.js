@@ -26,7 +26,7 @@ function createToken(user) {
  */
 router.post('/register', async (req, res, next) => {
   try {
-    const { username, password } = req.body
+    const { username, password, name, address, gender } = req.body
 
     if (!username || !password) {
       return res.status(400).json({ success: false, error: '아이디와 비밀번호를 입력해주세요.' })
@@ -40,6 +40,15 @@ router.post('/register', async (req, res, next) => {
     if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX) {
       return res.status(400).json({ success: false, error: `비밀번호는 ${PASSWORD_MIN}~${PASSWORD_MAX}자여야 합니다.` })
     }
+    if (!name?.trim()) {
+      return res.status(400).json({ success: false, error: '이름을 입력해주세요.' })
+    }
+    if (!address?.trim()) {
+      return res.status(400).json({ success: false, error: '거주지를 입력해주세요.' })
+    }
+    if (!gender) {
+      return res.status(400).json({ success: false, error: '성별을 선택해주세요.' })
+    }
 
     const existing = await pool.query('SELECT id FROM lawyer.users WHERE username = $1', [username])
     if (existing.rows.length > 0) {
@@ -47,13 +56,13 @@ router.post('/register', async (req, res, next) => {
     }
 
     const { rows } = await pool.query(
-      'INSERT INTO lawyer.users (id, username, password) VALUES ($1, $2, $3) RETURNING id, username',
-      [uuidv4(), username, password]
+      'INSERT INTO lawyer.users (id, username, password, name, address, gender) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, name, address, gender',
+      [uuidv4(), username, password, name.trim(), address.trim(), gender]
     )
     const user = rows[0]
     const token = createToken(user)
 
-    res.status(201).json({ success: true, data: { token, user: { id: user.id, username: user.username } } })
+    res.status(201).json({ success: true, data: { token, user: { id: user.id, username: user.username, name: user.name, address: user.address, gender: user.gender } } })
   } catch (error) {
     next(error)
   }
@@ -106,7 +115,7 @@ router.get('/me', async (req, res, next) => {
     }
 
     const { rows } = await pool.query(
-      'SELECT id, username, created_at FROM lawyer.users WHERE id = $1',
+      'SELECT id, username, name, address, gender, created_at FROM lawyer.users WHERE id = $1',
       [payload.userId]
     )
     if (rows.length === 0) {

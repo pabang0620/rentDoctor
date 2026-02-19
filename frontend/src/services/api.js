@@ -50,10 +50,10 @@ async function fetchAPI(endpoint, options = {}) {
  * 인증 API
  */
 export const authAPI = {
-  register: async (username, password) => {
+  register: async (username, password, name, address, gender) => {
     const res = await fetchAPI('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password, name, address, gender })
     })
     return res.data
   },

@@ -75,7 +75,12 @@ ALTER TABLE lawyer.diagnoses ADD COLUMN IF NOT EXISTS risk_level            VARC
 ALTER TABLE lawyer.diagnoses ADD COLUMN IF NOT EXISTS risk_score            INTEGER;
 ALTER TABLE lawyer.diagnoses ADD COLUMN IF NOT EXISTS result                JSONB;
 
--- 7. 인덱스 (컬럼 추가 이후에 생성)
+-- 7. users: 추가 정보 컬럼
+ALTER TABLE lawyer.users ADD COLUMN IF NOT EXISTS name    VARCHAR(50);
+ALTER TABLE lawyer.users ADD COLUMN IF NOT EXISTS address VARCHAR(200);
+ALTER TABLE lawyer.users ADD COLUMN IF NOT EXISTS gender  VARCHAR(10);
+
+-- 8. 인덱스 (컬럼 추가 이후에 생성)
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id    ON lawyer.sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_diagnoses_session_id ON lawyer.diagnoses(session_id);
 CREATE INDEX IF NOT EXISTS idx_diagnoses_user_id   ON lawyer.diagnoses(user_id);

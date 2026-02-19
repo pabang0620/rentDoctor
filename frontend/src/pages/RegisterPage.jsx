@@ -6,6 +6,9 @@ import './AuthPage.css'
 function RegisterPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
+  const [address, setAddress] = useState('')
+  const [gender, setGender] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -17,7 +20,7 @@ function RegisterPage() {
     setError('')
     setIsLoading(true)
     try {
-      await register(username, password)
+      await register(username, password, name, address, gender)
       navigate('/')
     } catch (err) {
       setError(err.message || '회원가입에 실패했습니다.')
@@ -34,6 +37,45 @@ function RegisterPage() {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-field">
+            <label className="auth-label">이름</label>
+            <input
+              className="auth-input"
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="실명을 입력해주세요"
+              maxLength={50}
+              autoFocus
+            />
+          </div>
+
+          <div className="auth-field">
+            <label className="auth-label">성별</label>
+            <select
+              className="auth-input"
+              value={gender}
+              onChange={e => setGender(e.target.value)}
+            >
+              <option value="">선택해주세요</option>
+              <option value="남성">남성</option>
+              <option value="여성">여성</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+
+          <div className="auth-field">
+            <label className="auth-label">거주지</label>
+            <input
+              className="auth-input"
+              type="text"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+              placeholder="예) 서울시 강남구"
+              maxLength={200}
+            />
+          </div>
+
+          <div className="auth-field">
             <label className="auth-label">아이디</label>
             <input
               className="auth-input"
@@ -43,7 +85,6 @@ function RegisterPage() {
               placeholder="영문·숫자·밑줄, 3~20자"
               maxLength={20}
               autoComplete="username"
-              autoFocus
             />
           </div>
 
