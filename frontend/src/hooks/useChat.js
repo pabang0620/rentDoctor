@@ -260,8 +260,8 @@ export function useChat() {
     setIsStreaming(true)
 
     let i = 0
-    const CHUNK = 8   // 한 번에 보낼 글자 수
-    const DELAY = 14  // ms 간격
+    const CHUNK = 3   // 한 번에 보낼 글자 수
+    const DELAY = 45  // ms 간격 (AI 스트리밍과 비슷한 속도)
 
     quickStreamIntervalRef.current = setInterval(() => {
       if (i >= answer.length) {
