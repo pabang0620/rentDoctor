@@ -1,0 +1,198 @@
+.mypage {
+  min-height: calc(100vh - 60px);
+  background: var(--color-bg);
+  padding: 2rem 1.25rem;
+}
+
+.mypage-inner {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.mypage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.mypage-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.mypage-history-link {
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.mypage-history-link:hover {
+  text-decoration: underline;
+}
+
+.mypage-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.mypage-row {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mypage-row:last-child {
+  border-bottom: none;
+}
+
+.mypage-label {
+  width: 5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.mypage-value {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.mypage-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mypage-logout-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background 0.12s ease;
+}
+
+.mypage-logout-btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.mypage-delete-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: all 0.12s ease;
+}
+
+.mypage-delete-btn:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* 탈퇴 확인 모달 */
+.mypage-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.mypage-confirm-box {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem 1.5rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.18);
+}
+
+.mypage-confirm-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.02em;
+}
+
+.mypage-confirm-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.mypage-confirm-btns {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.mypage-confirm-cancel {
+  flex: 1;
+  padding: 0.625rem;
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: all 0.12s ease;
+}
+
+.mypage-confirm-cancel:hover:not(:disabled) {
+  border-color: var(--color-text);
+  color: var(--color-text);
+}
+
+.mypage-confirm-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mypage-confirm-ok {
+  flex: 1;
+  padding: 0.625rem;
+  background: var(--color-danger);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background 0.12s ease;
+}
+
+.mypage-confirm-ok:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.mypage-confirm-ok:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

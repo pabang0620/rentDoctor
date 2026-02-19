@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import ChatInterface from '../components/ChatInterface/ChatInterface.jsx'
 import useChat from '../hooks/useChat.js'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -6,6 +7,8 @@ import './ChatPage.css'
 
 function ChatPage() {
   const { isLoading: authLoading } = useAuth()
+  const [searchParams] = useSearchParams()
+  const urlSessionId = searchParams.get('sessionId')
   const {
     messages,
     isLoading,
@@ -34,8 +37,8 @@ function ChatPage() {
       } catch { /* ignore */ }
       sessionStorage.removeItem('diagnosisContext')
     }
-    initializeChat(diagnosis)
-  }, [authLoading, initializeChat])
+    initializeChat(diagnosis, urlSessionId)
+  }, [authLoading, initializeChat, urlSessionId])
 
   return (
     <div className="chat-page">

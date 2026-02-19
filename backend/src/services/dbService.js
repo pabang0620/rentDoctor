@@ -1,5 +1,30 @@
 import pool from '../db/pool.js'
 
+export async function deleteUserData(userId) {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    // 메시지 삭제 (유저가 소유한 세션의 모든 메시지)
+    await client.query(
+      `DELETE FROM lawyer.messages
+       WHERE session_id IN (SELECT id FROM lawyer.sessions WHERE user_id = $1)`,
+      [userId]
+    )
+    // 진단 기록 삭제
+    await client.query('DELETE FROM lawyer.diagnoses WHERE user_id = $1', [userId])
+    // 세션 삭제
+    await client.query('DELETE FROM lawyer.sessions WHERE user_id = $1', [userId])
+    // 유저 삭제
+    await client.query('DELETE FROM lawyer.users WHERE id = $1', [userId])
+    await client.query('COMMIT')
+  } catch (err) {
+    await client.query('ROLLBACK')
+    throw err
+  } finally {
+    client.release()
+  }
+}
+
 // ========================
 // 세션
 // ========================
@@ -24,6 +49,21 @@ export async function getLatestUserSession(userId) {
     [userId]
   )
   return rows[0] || null
+}
+
+export async function getUserSessions(userId) {
+  const { rows } = await pool.query(
+    `SELECT s.id, s.created_at, s.updated_at,
+            (SELECT content FROM lawyer.messages
+             WHERE session_id = s.id AND role = 'user'
+             ORDER BY created_at ASC LIMIT 1) AS first_message,
+            (SELECT COUNT(*) FROM lawyer.messages WHERE session_id = s.id) AS message_count
+     FROM lawyer.sessions s
+     WHERE s.user_id = $1
+     ORDER BY s.updated_at DESC`,
+    [userId]
+  )
+  return rows
 }
 
 // ========================

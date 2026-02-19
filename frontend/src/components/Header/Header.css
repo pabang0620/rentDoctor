@@ -135,6 +135,11 @@
   font-weight: 600;
   color: var(--color-text);
   white-space: nowrap;
+  text-decoration: none;
+}
+
+.header-username:hover {
+  text-decoration: underline;
 }
 
 .header-logout {

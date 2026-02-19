@@ -69,6 +69,10 @@ export const authAPI = {
   me: async () => {
     const res = await fetchAPI('/auth/me')
     return res.data
+  },
+
+  deleteAccount: async () => {
+    return fetchAPI('/auth/me', { method: 'DELETE' })
   }
 }
 
@@ -135,8 +139,18 @@ export const chatAPI = {
     }
   },
 
+  getSessions: async () => {
+    const res = await fetchAPI('/chat/sessions')
+    return res.data
+  },
+
   getMyHistory: async () => {
     const res = await fetchAPI('/chat/my-history')
+    return res.data
+  },
+
+  getSessionHistory: async (sessionId) => {
+    const res = await fetchAPI(`/chat/history/${sessionId}`)
     return res.data
   },
 

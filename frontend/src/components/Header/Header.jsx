@@ -44,7 +44,7 @@ function Header() {
 
             {user ? (
               <div className="header-user">
-                <span className="header-username">{user.username}</span>
+                <Link to="/mypage" className="header-username">{user.name || user.username}</Link>
                 <button className="header-logout" onClick={handleLogout}>로그아웃</button>
               </div>
             ) : (
@@ -69,10 +69,14 @@ function Header() {
             <Link to="/chat" className={`mobile-nav-link ${isActive('/chat') ? 'active' : ''}`} onClick={closeMenu}>상담하기</Link>
             <Link to="/diagnosis" className={`mobile-nav-link ${isActive('/diagnosis') ? 'active' : ''}`} onClick={closeMenu}>위험 진단</Link>
             {user ? (
-              <div className="mobile-nav-user">
-                <span className="mobile-nav-username">{user.username}님</span>
-                <button className="mobile-nav-logout" onClick={handleLogout}>로그아웃</button>
-              </div>
+              <>
+                <div className="mobile-nav-user">
+                  <span className="mobile-nav-username">{user.name || user.username}님</span>
+                  <button className="mobile-nav-logout" onClick={handleLogout}>로그아웃</button>
+                </div>
+                <Link to="/mypage" className={`mobile-nav-link ${isActive('/mypage') ? 'active' : ''}`} onClick={closeMenu}>내 계정</Link>
+                <Link to="/history" className={`mobile-nav-link ${isActive('/history') ? 'active' : ''}`} onClick={closeMenu}>대화 이력</Link>
+              </>
             ) : (
               <>
                 <Link to="/login" className="mobile-nav-link" onClick={closeMenu}>로그인</Link>

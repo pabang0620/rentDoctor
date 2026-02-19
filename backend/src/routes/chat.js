@@ -1,9 +1,10 @@
 import { Router } from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import { generateChatResponse, generateStreamingResponse } from '../services/aiService.js'
-import { saveMessage, getMessages, getLatestUserSession } from '../services/dbService.js'
+import { saveMessage, getMessages, getLatestUserSession, getUserSessions } from '../services/dbService.js'
 import { chatLimiter } from '../middleware/rateLimiter.js'
 import { optionalAuth } from '../middleware/auth.js'
+import pool from '../db/pool.js'
 
 const router = Router()
 
@@ -31,6 +32,22 @@ setInterval(() => {
 }, 60 * 60 * 1000)
 
 /**
+ * GET /api/chat/sessions
+ * 로그인 사용자의 모든 대화 세션 목록 반환
+ */
+router.get('/sessions', optionalAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: '로그인이 필요합니다.' })
+    }
+    const sessions = await getUserSessions(req.user.id)
+    res.json({ success: true, data: sessions })
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
  * GET /api/chat/my-history
  * 로그인 사용자의 최근 대화 이력 반환
  */
@@ -47,6 +64,31 @@ router.get('/my-history', optionalAuth, async (req, res, next) => {
 
     const messages = await getMessages(dbSession.id)
     res.json({ success: true, data: { sessionId: dbSession.id, messages } })
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * GET /api/chat/history/:sessionId
+ * 특정 세션의 대화 이력 반환 (본인 세션만)
+ */
+router.get('/history/:sessionId', optionalAuth, async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: '로그인이 필요합니다.' })
+    }
+
+    const { rows } = await pool.query(
+      'SELECT id FROM lawyer.sessions WHERE id = $1 AND user_id = $2',
+      [req.params.sessionId, req.user.id]
+    )
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, error: '세션을 찾을 수 없습니다.' })
+    }
+
+    const messages = await getMessages(req.params.sessionId)
+    res.json({ success: true, data: { sessionId: req.params.sessionId, messages } })
   } catch (error) {
     next(error)
   }

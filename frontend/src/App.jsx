@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { ToastProvider } from './context/ToastContext.jsx'
 import Header from './components/Header/Header.jsx'
 import Footer from './components/Footer/Footer.jsx'
 import HomePage from './pages/HomePage.jsx'
@@ -7,6 +8,8 @@ import ChatPage from './pages/ChatPage.jsx'
 import DiagnosticPage from './pages/DiagnosticPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
+import MyPage from './pages/MyPage.jsx'
+import HistoryPage from './pages/HistoryPage.jsx'
 import PrivacyPage from './pages/PrivacyPage.jsx'
 import TermsPage from './pages/TermsPage.jsx'
 import './App.css'
@@ -15,20 +18,24 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Header />
-        <main>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/diagnosis" element={<DiagnosticPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
+        <ToastProvider>
+          <Header />
+          <main>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/diagnosis" element={<DiagnosticPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <Footer />
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   )

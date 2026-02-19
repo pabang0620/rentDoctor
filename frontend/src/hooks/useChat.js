@@ -181,17 +181,20 @@ export function useChat() {
   }, [sessionId])
 
   /**
-   * 초기 웰컴 메시지 (진단 컨텍스트 있으면 맞춤형으로)
+   * 초기 웰컴 메시지 (진단 컨텍스트 있으면 맞춤형으로, urlSessionId 있으면 해당 세션 복원)
    */
-  const initializeChat = useCallback(async (diagnosis = null) => {
+  const initializeChat = useCallback(async (diagnosis = null, urlSessionId = null) => {
     diagnosisContextRef.current = diagnosis
     isFirstMessageRef.current = true
 
-    // 로그인 사용자 & 진단 컨텍스트 없을 때: 이전 대화 이력 불러오기
+    // 로그인 사용자 & 진단 컨텍스트 없을 때: 대화 이력 불러오기
     if (user && !diagnosis) {
       setIsInitializing(true)
       try {
-        const history = await chatAPI.getMyHistory()
+        const fetchHistory = urlSessionId
+          ? chatAPI.getSessionHistory(urlSessionId)
+          : chatAPI.getMyHistory()
+        const history = await fetchHistory
         if (history && history.messages?.length > 0) {
           const restored = history.messages.map(m => ({
             id: m.id,

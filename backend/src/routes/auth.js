@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import pool from '../db/pool.js'
+import { deleteUserData } from '../services/dbService.js'
 
 const router = Router()
 
@@ -123,6 +124,31 @@ router.get('/me', async (req, res, next) => {
     }
 
     res.json({ success: true, data: { user: rows[0] } })
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * DELETE /api/auth/me
+ * 회원 탈퇴
+ */
+router.delete('/me', async (req, res, next) => {
+  try {
+    const auth = req.headers.authorization
+    if (!auth?.startsWith('Bearer ')) {
+      return res.status(401).json({ success: false, error: '인증 정보가 없습니다.' })
+    }
+
+    let payload
+    try {
+      payload = jwt.verify(auth.slice(7), JWT_SECRET)
+    } catch {
+      return res.status(401).json({ success: false, error: '유효하지 않은 토큰입니다.' })
+    }
+
+    await deleteUserData(payload.userId)
+    res.json({ success: true, data: { message: '회원 탈퇴가 완료되었습니다.' } })
   } catch (error) {
     next(error)
   }
