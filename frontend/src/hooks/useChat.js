@@ -155,6 +155,8 @@ export function useChat() {
     setSessionId(null)
     setError(null)
     streamingMessageRef.current = ''
+    diagnosisContextRef.current = null
+    isFirstMessageRef.current = true
   }, [sessionId])
 
   /**

@@ -1,9 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import ChatInterface from '../components/ChatInterface/ChatInterface.jsx'
 import useChat from '../hooks/useChat.js'
+import { useAuth } from '../context/AuthContext.jsx'
 import './ChatPage.css'
 
 function ChatPage() {
+  const { isLoading: authLoading } = useAuth()
   const {
     messages,
     isLoading,
@@ -13,8 +15,13 @@ function ChatPage() {
     clearChat,
     initializeChat
   } = useChat()
+  const initialized = useRef(false)
 
   useEffect(() => {
+    // 인증 로딩 완료 후 1회만 초기화 (로그인 상태 확인 후 이력 복원)
+    if (authLoading || initialized.current) return
+    initialized.current = true
+
     let diagnosis = null
     const saved = sessionStorage.getItem('diagnosisContext')
     if (saved) {
@@ -24,7 +31,7 @@ function ChatPage() {
       sessionStorage.removeItem('diagnosisContext')
     }
     initializeChat(diagnosis)
-  }, [])
+  }, [authLoading, initializeChat])
 
   return (
     <div className="chat-page">
