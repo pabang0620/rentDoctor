@@ -7,8 +7,7 @@ function Footer() {
       <div className="footer-inner">
         <div className="footer-top">
           <div className="footer-brand">
-            <span className="footer-logo-mark"></span>
-            <span className="footer-brand-name">전세닥터</span>
+            <img src="/logo.png" alt="전세닥터" className="footer-logo-img" />
           </div>
           <p className="footer-disclaimer">
             본 서비스는 <strong>법률 정보 제공 목적</strong>으로 운영되며, AI의 응답은 법적 효력이 없습니다.

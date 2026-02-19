@@ -29,19 +29,11 @@
   text-decoration: none;
 }
 
-.header-logo-mark {
-  width: 22px;
-  height: 22px;
-  background: var(--color-primary);
-  border-radius: 1px;
-  flex-shrink: 0;
-}
-
-.header-logo-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
+.header-logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
 /* 네비게이션 */

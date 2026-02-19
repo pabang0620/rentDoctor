@@ -26,20 +26,11 @@
   flex-shrink: 0;
 }
 
-.footer-logo-mark {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background: #dc2626;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.footer-brand-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #f1f5f9;
-  white-space: nowrap;
+.footer-logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
 .footer-disclaimer {
