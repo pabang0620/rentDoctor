@@ -161,7 +161,7 @@ app.get('/delete-account', (req, res) => {
   <p>앱 접속이 어려운 경우 아래 이메일로 아이디와 함께 삭제 요청을 보내주세요.<br />
   영업일 기준 <strong>3일 이내</strong>에 처리 후 회신드립니다.</p>
   <div class="box">
-    <strong>📧 contact@jeonse-doctor.com</strong>
+    <strong>📧 lwh970924@gmail.com</strong>
   </div>
 
   <p style="margin-top:2rem; font-size:0.85rem; color:#94a3b8;">
