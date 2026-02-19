@@ -1,9 +1,9 @@
 /**
  * 인증 UI 테스트 (로그인 / 회원가입 / 로그아웃)
- * 각 테스트는 고유 유저를 생성하므로 병렬 안전
+ * 로그인 상태 테스트는 beforeAll 1유저 공유 → rate limit 절약
  */
 import { test, expect } from '@playwright/test'
-import { uniqueUser, registerUser, deleteUserByToken, loginPage } from './helpers/auth.js'
+import { uniqueUser, registerUser, deleteUserByToken } from './helpers/auth.js'
 
 const API = 'http://localhost:5000'
 
@@ -24,9 +24,9 @@ test.describe('로그인 페이지', () => {
     await expect(page.locator('.auth-error')).toBeVisible()
   })
 
-  test('틀린 비밀번호 → 에러 메시지', async ({ page }) => {
-    const user = uniqueUser('ui_login')
-    const { body } = await registerUser(page.request, user)
+  test('틀린 비밀번호 → 에러 메시지', async ({ page, request }) => {
+    const user = uniqueUser('lge')
+    const { body } = await registerUser(request, user)
     const token = body.data?.token
 
     await page.goto('/login')
@@ -35,12 +35,12 @@ test.describe('로그인 페이지', () => {
     await page.locator('button[type="submit"]').click()
     await expect(page.locator('.auth-error')).toBeVisible({ timeout: 10000 })
 
-    await deleteUserByToken(page.request, token)
+    await deleteUserByToken(request, token)
   })
 
-  test('정상 로그인 → 홈 리다이렉트', async ({ page }) => {
-    const user = uniqueUser('ui_login_ok')
-    const { body } = await registerUser(page.request, user)
+  test('정상 로그인 → 홈 리다이렉트', async ({ page, request }) => {
+    const user = uniqueUser('lok')
+    const { body } = await registerUser(request, user)
     const token = body.data?.token
 
     await page.goto('/login')
@@ -49,7 +49,7 @@ test.describe('로그인 페이지', () => {
     await page.locator('button[type="submit"]').click()
     await expect(page).toHaveURL('/', { timeout: 10000 })
 
-    await deleteUserByToken(page.request, token)
+    await deleteUserByToken(request, token)
   })
 
   test('회원가입 링크 → /register', async ({ page }) => {
@@ -61,21 +61,17 @@ test.describe('로그인 페이지', () => {
 
 // ─── 회원가입 페이지 UI ────────────────────────────────────
 test.describe('회원가입 페이지', () => {
-  test('회원가입 폼 렌더링 (5개 필드)', async ({ page }) => {
+  test('회원가입 폼 렌더링 (필드 4개 이상)', async ({ page }) => {
     await page.goto('/register')
     await expect(page.locator('.auth-title')).toContainText('회원가입')
-    // 이름, 성별(select), 거주지, 아이디, 비밀번호
     const inputs = page.locator('.auth-input')
-    const count = await inputs.count()
-    expect(count).toBeGreaterThanOrEqual(4)
+    expect(await inputs.count()).toBeGreaterThanOrEqual(4)
     await page.screenshot({ path: 'tests/screenshots/register.png' })
   })
 
-  test('성별 선택 옵션 3개', async ({ page }) => {
+  test('성별 선택 옵션 4개 (선택포함)', async ({ page }) => {
     await page.goto('/register')
-    const options = page.locator('select.auth-input option')
-    // 선택해주세요 + 남성 + 여성 + 기타
-    await expect(options).toHaveCount(4)
+    await expect(page.locator('select.auth-input option')).toHaveCount(4)
   })
 
   test('빈 폼 제출 → 에러', async ({ page }) => {
@@ -84,54 +80,61 @@ test.describe('회원가입 페이지', () => {
     await expect(page.locator('.auth-error')).toBeVisible({ timeout: 5000 })
   })
 
-  test('정상 회원가입 → 홈 리다이렉트 + 토큰 저장', async ({ page }) => {
-    const user = uniqueUser('ui_reg')
+  test('정상 회원가입 → 홈 리다이렉트 + 토큰 저장', async ({ page, request }) => {
+    const user = uniqueUser('rgk')
     await page.goto('/register')
     await page.fill('input[placeholder="실명을 입력해주세요"]', user.name)
     await page.selectOption('select.auth-input', '기타')
-    await page.fill('input[placeholder*="거주지"]', user.address)
+    await page.locator('.auth-field').filter({ hasText: '거주지' }).locator('input').fill(user.address)
     await page.fill('input[autocomplete="username"]', user.username)
     await page.fill('input[autocomplete="new-password"]', user.password)
     await page.locator('button[type="submit"]').click()
     await expect(page).toHaveURL('/', { timeout: 10000 })
 
-    // localStorage에 token 저장 확인
     const token = await page.evaluate(() => localStorage.getItem('token'))
     expect(token).toBeTruthy()
-
-    await deleteUserByToken(page.request, token)
+    await deleteUserByToken(request, token)
   })
 })
 
-// ─── 로그인 상태 확인 ──────────────────────────────────────
+// ─── 로그인 상태 (1유저 공유) ─────────────────────────────
 test.describe('로그인 상태', () => {
-  test('로그인 시 헤더에 이름 + 로그아웃 버튼 표시', async ({ page }) => {
-    const { user, token } = await loginPage(page, page.request)
+  let sharedToken
+  let sharedUser
 
-    const username = page.locator('.header-username')
-    await expect(username).toBeVisible()
-    const logoutBtn = page.locator('.header-logout')
-    await expect(logoutBtn).toBeVisible()
-
-    await deleteUserByToken(page.request, token)
+  test.beforeAll(async ({ request }) => {
+    sharedUser = uniqueUser('lgd')
+    const { body } = await registerUser(request, sharedUser)
+    sharedToken = body.data?.token
+    if (!sharedToken) throw new Error(`유저 생성 실패: ${JSON.stringify(body)}`)
   })
 
-  test('로그아웃 → 로그인 버튼으로 교체', async ({ page }) => {
-    const { token } = await loginPage(page, page.request)
+  test.afterAll(async ({ request }) => {
+    await deleteUserByToken(request, sharedToken)
+  })
 
+  async function loginPage(page) {
+    await page.goto('/')
+    await page.evaluate((t) => localStorage.setItem('token', t), sharedToken)
+    await page.reload()
+  }
+
+  test('헤더에 이름 + 로그아웃 버튼 표시', async ({ page }) => {
+    await loginPage(page)
+    await expect(page.locator('.header-username')).toBeVisible()
+    await expect(page.locator('.header-logout')).toBeVisible()
+  })
+
+  test('로그아웃 → 로그인 버튼 표시', async ({ page }) => {
+    await loginPage(page)
     await page.locator('.header-logout').click()
     await expect(page.locator('.header-login-btn')).toBeVisible({ timeout: 5000 })
-
-    await deleteUserByToken(page.request, token)
   })
 
-  test('로그인 후 마이페이지(/mypage) 접근 가능', async ({ page }) => {
-    const { token } = await loginPage(page, page.request)
-
+  test('마이페이지(/mypage) 접근 가능', async ({ page }) => {
+    await loginPage(page)
     await page.goto('/mypage')
     await expect(page.locator('.mypage-title')).toContainText('내 계정')
     await page.screenshot({ path: 'tests/screenshots/mypage.png' })
-
-    await deleteUserByToken(page.request, token)
   })
 })

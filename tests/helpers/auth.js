@@ -21,6 +21,9 @@ export function uniqueUser(prefix = 'tst') {
 export async function registerUser(request, user) {
   const res = await request.post(`${API}/api/auth/register`, { data: user })
   const body = await res.json()
+  if (res.status() !== 201) {
+    console.error(`[registerUser] ${res.status()} username=${user.username}`, body)
+  }
   return { status: res.status(), body }
 }
 

@@ -239,6 +239,7 @@ test.describe('채팅 API', () => {
   test('AI 채팅 응답 (1회)', async ({ request }) => {
     const res = await request.post(`${API}/api/chat`, {
       data: { message: '전세사기 피해 시 가장 먼저 해야 할 일이 뭔가요?' },
+      timeout: 45000,
     })
     if (res.status() === 429) { test.skip(); return }
     expect(res.status()).toBe(200)

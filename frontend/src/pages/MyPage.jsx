@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useToast } from '../context/ToastContext.jsx'
@@ -6,18 +6,23 @@ import { authAPI } from '../services/api.js'
 import './MyPage.css'
 
 function MyPage() {
-  const { user, logout } = useAuth()
+  const { user, isLoading: authLoading, logout } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
   const [showConfirm, setShowConfirm] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const leavingRef = useRef(false)
 
-  if (!user) {
-    navigate('/login')
-    return null
-  }
+  useEffect(() => {
+    if (!authLoading && !user && !leavingRef.current) {
+      navigate('/login')
+    }
+  }, [authLoading, user, navigate])
+
+  if (authLoading || !user) return null
 
   const handleLogout = () => {
+    leavingRef.current = true
     logout()
     showToast('로그아웃 되었습니다.', 'info')
     navigate('/')
@@ -27,6 +32,7 @@ function MyPage() {
     setIsDeleting(true)
     try {
       await authAPI.deleteAccount()
+      leavingRef.current = true
       logout()
       showToast('회원 탈퇴가 완료되었습니다.', 'success')
       navigate('/')

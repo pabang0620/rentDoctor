@@ -1,11 +1,11 @@
 import rateLimit from 'express-rate-limit'
 
 /**
- * 일반 API 요청 제한 (분당 60회)
+ * 일반 API 요청 제한 (분당 60회, 개발환경 200회)
  */
 export const generalLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 60,
+  max: process.env.NODE_ENV === 'production' ? 60 : 200,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -42,11 +42,11 @@ export const chatLimiter = rateLimit({
 })
 
 /**
- * 진단 API 요청 제한 (분당 5회)
+ * 진단 API 요청 제한 (분당 5회, 개발환경 30회)
  */
 export const diagnosisLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 5,
+  max: process.env.NODE_ENV === 'production' ? 5 : 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

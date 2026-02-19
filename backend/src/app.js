@@ -115,6 +115,62 @@ app.get('/privacy', (req, res) => {
 </html>`)
 })
 
+// 계정 삭제 요청 페이지 (Play Store / App Store 등록용 공개 URL)
+app.get('/delete-account', (req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8')
+  res.send(`<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>계정 삭제 - 전세닥터</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; color: #1e293b; line-height: 1.7; }
+    h1 { font-size: 1.5rem; border-bottom: 2px solid #0f172a; padding-bottom: 0.75rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; color: #0f172a; }
+    p, li { font-size: 0.95rem; color: #334155; }
+    ul { padding-left: 1.25rem; }
+    .btn { display: inline-block; margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #dc2626; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; }
+    .btn:hover { background: #b91c1c; }
+    .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem 1.5rem; margin-top: 1rem; }
+    .updated { color: #64748b; font-size: 0.875rem; margin-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>계정 및 데이터 삭제</h1>
+  <p class="updated">전세닥터 서비스</p>
+
+  <h2>삭제되는 데이터</h2>
+  <ul>
+    <li>계정 정보 (아이디, 이름, 거주지, 성별)</li>
+    <li>AI 상담 대화 이력 전체</li>
+    <li>위험도 진단 기록</li>
+  </ul>
+
+  <h2>앱에서 직접 삭제하는 방법</h2>
+  <div class="box">
+    <ol>
+      <li>앱에 로그인합니다.</li>
+      <li>우측 상단 <strong>내 이름</strong>을 눌러 <strong>내 계정</strong> 페이지로 이동합니다.</li>
+      <li>하단의 <strong>회원 탈퇴</strong> 버튼을 클릭합니다.</li>
+      <li>확인 창에서 <strong>탈퇴 확인</strong>을 누르면 즉시 삭제됩니다.</li>
+    </ol>
+  </div>
+
+  <h2>이메일로 삭제 요청</h2>
+  <p>앱 접속이 어려운 경우 아래 이메일로 아이디와 함께 삭제 요청을 보내주세요.<br />
+  영업일 기준 <strong>3일 이내</strong>에 처리 후 회신드립니다.</p>
+  <div class="box">
+    <strong>📧 contact@jeonse-doctor.com</strong>
+  </div>
+
+  <p style="margin-top:2rem; font-size:0.85rem; color:#94a3b8;">
+    삭제 요청 후 계정과 모든 관련 데이터는 즉시 파기되며 복구할 수 없습니다.
+  </p>
+</body>
+</html>`)
+})
+
 // 헬스체크
 app.get('/health', (req, res) => {
   res.json({
