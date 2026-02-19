@@ -1,0 +1,144 @@
+.footer {
+  background: var(--color-primary);
+  color: #cbd5e1;
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 1.5rem;
+}
+
+.footer-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 1.75rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.footer-logo-mark {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: #dc2626;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.footer-brand-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  white-space: nowrap;
+}
+
+.footer-disclaimer {
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: #94a3b8;
+}
+
+.footer-disclaimer strong {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.footer-mid {
+  display: flex;
+  gap: 3rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 1.25rem;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-col-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.footer-emergency-link,
+.footer-nav-link {
+  font-size: 0.8375rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.15s;
+  width: fit-content;
+}
+
+.footer-emergency-link:hover,
+.footer-nav-link:hover {
+  color: #f1f5f9;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.footer-policy-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-policy-link {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-policy-link:hover {
+  color: #94a3b8;
+}
+
+.footer-policy-sep {
+  color: #475569;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .footer-top {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .footer-mid {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

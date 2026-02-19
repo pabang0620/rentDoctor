@@ -273,13 +273,18 @@ const URGENCY_CONFIG = {
   check: { label: '확인·검토',   color: '#2563eb', bg: '#eff6ff', border: '#2563eb' }
 }
 
+// AI 응답에서 마크다운 강조(**)를 제거
+function plain(text) {
+  return typeof text === 'string' ? text.replace(/\*\*/g, '') : text
+}
+
 function ActionCard({ action, index }) {
   // 구버전 호환: string으로 온 경우 단순 표시
   if (typeof action === 'string') {
     return (
       <div className="action-card action-card--compat">
         <span className="action-card-num">{index + 1}</span>
-        <p className="action-card-title">{action}</p>
+        <p className="action-card-title">{plain(action)}</p>
       </div>
     )
   }
@@ -293,11 +298,11 @@ function ActionCard({ action, index }) {
         <span className="action-card-badge" style={{ color: urgency.color, background: urgency.bg }}>
           {urgency.label}
         </span>
-        <h5 className="action-card-title">{action.title}</h5>
+        <h5 className="action-card-title">{plain(action.title)}</h5>
       </div>
       <ol className="action-card-steps">
         {action.steps.map((step, j) => (
-          <li key={j}>{step}</li>
+          <li key={j}>{plain(step)}</li>
         ))}
       </ol>
       {action.contact && (
@@ -342,14 +347,14 @@ function DiagnosticResult({ result }) {
         </div>
       </div>
 
-      <p className="result-summary">{result.summary}</p>
+      <p className="result-summary">{plain(result.summary)}</p>
 
       {result.mainRisks && result.mainRisks.length > 0 && (
         <div className="result-section">
           <h4 className="result-section-title result-section-title--danger">주요 위험 요소</h4>
           <ul className="result-list result-list--danger">
             {result.mainRisks.map((risk, i) => (
-              <li key={i}>{risk}</li>
+              <li key={i}>{plain(risk)}</li>
             ))}
           </ul>
         </div>
