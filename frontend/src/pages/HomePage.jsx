@@ -65,10 +65,10 @@ const processSteps = [
 ]
 
 const stats = [
-  { value: '2.4만', label: '전세사기 피해 접수 건수 (2023)' },
-  { value: '3.4조', label: '추정 피해 보증금 규모' },
+  { value: '2.7만+', label: '전세사기 피해 접수 건수 (2023~2024)' },
+  { value: '3.4조+', label: '추정 피해 보증금 규모' },
   { value: '9개', label: '핵심 법령 데이터베이스' },
-  { value: '24시간', label: '무료 상담 운영' },
+  { value: '24시간', label: '무료 상담 서비스' },
 ]
 
 function HomePage() {
@@ -193,7 +193,7 @@ function HomePage() {
               </div>
             ))}
           </div>
-          <p className="stats-note">※ 통계는 2023년 공개 자료 기준입니다. 최신 현황은 국토교통부·HUG 공식 채널에서 확인하세요.</p>
+          <p className="stats-note">※ 피해 통계는 국토교통부·HUG 공개 자료(2023~2024년 기준)이며, 실제 피해는 더 많을 수 있습니다.</p>
         </div>
       </section>
 

@@ -10,11 +10,14 @@ function ChatPage() {
     messages,
     isLoading,
     isStreaming,
+    isInitializing,
+    isQuickStreaming,
     error,
     sendMessage,
     clearChat,
     initializeChat,
-    addQuickAnswer
+    addQuickAnswer,
+    skipQuickStream
   } = useChat()
   const initialized = useRef(false)
 
@@ -40,10 +43,13 @@ function ChatPage() {
         messages={messages}
         isLoading={isLoading}
         isStreaming={isStreaming}
+        isInitializing={isInitializing}
+        isQuickStreaming={isQuickStreaming}
         error={error}
         onSendMessage={sendMessage}
         onClearChat={clearChat}
         onQuickAnswer={addQuickAnswer}
+        onSkipStream={skipQuickStream}
       />
     </div>
   )

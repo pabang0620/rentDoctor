@@ -42,7 +42,10 @@ export function useChat() {
   const [error, setError] = useState(null)
   const [sessionId, setSessionId] = useState(null)
   const [isStreaming, setIsStreaming] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(false)
+  const [isQuickStreaming, setIsQuickStreaming] = useState(false)
   const streamingMessageRef = useRef('')
+  const quickStreamFullTextRef = useRef('')
   const diagnosisContextRef = useRef(null)
   const isFirstMessageRef = useRef(true)
   const quickStreamIntervalRef = useRef(null)
@@ -171,6 +174,7 @@ export function useChat() {
     setError(null)
     setIsLoading(false)
     setIsStreaming(false)
+    setIsQuickStreaming(false)
     streamingMessageRef.current = ''
     diagnosisContextRef.current = null
     isFirstMessageRef.current = true
@@ -185,6 +189,7 @@ export function useChat() {
 
     // 로그인 사용자 & 진단 컨텍스트 없을 때: 이전 대화 이력 불러오기
     if (user && !diagnosis) {
+      setIsInitializing(true)
       try {
         const history = await chatAPI.getMyHistory()
         if (history && history.messages?.length > 0) {
@@ -196,9 +201,11 @@ export function useChat() {
           }))
           setSessionId(history.sessionId)
           setMessages(restored)
+          setIsInitializing(false)
           return
         }
       } catch { /* 이력 불러오기 실패 시 기본 웰컴 메시지로 */ }
+      setIsInitializing(false)
     }
 
     let welcomeContent
@@ -270,6 +277,9 @@ export function useChat() {
     const CHUNK = 3   // 한 번에 보낼 글자 수
     const DELAY = 45  // ms 간격 (AI 스트리밍과 비슷한 속도)
 
+    quickStreamFullTextRef.current = answer
+    setIsQuickStreaming(true)
+
     quickStreamIntervalRef.current = setInterval(() => {
       if (i >= answer.length) {
         clearInterval(quickStreamIntervalRef.current)
@@ -282,6 +292,7 @@ export function useChat() {
           }
           return updated
         })
+        setIsQuickStreaming(false)
         setIsLoading(false)
         setIsStreaming(false)
         return
@@ -293,16 +304,40 @@ export function useChat() {
     }, DELAY)
   }, [updateLastMessage])
 
+  /**
+   * 빠른 답변 스트리밍 즉시 완료 (스킵)
+   */
+  const skipQuickStream = useCallback(() => {
+    if (!quickStreamIntervalRef.current) return
+    clearInterval(quickStreamIntervalRef.current)
+    quickStreamIntervalRef.current = null
+    const fullText = quickStreamFullTextRef.current
+    setMessages(prev => {
+      const updated = [...prev]
+      const last = updated[updated.length - 1]
+      if (last?.role === 'assistant' && last.isStreaming) {
+        updated[updated.length - 1] = { ...last, content: fullText, isStreaming: false }
+      }
+      return updated
+    })
+    setIsQuickStreaming(false)
+    setIsLoading(false)
+    setIsStreaming(false)
+  }, [])
+
   return {
     messages,
     isLoading,
     isStreaming,
+    isInitializing,
+    isQuickStreaming,
     error,
     sessionId,
     sendMessage,
     clearChat,
     initializeChat,
-    addQuickAnswer
+    addQuickAnswer,
+    skipQuickStream
   }
 }
 

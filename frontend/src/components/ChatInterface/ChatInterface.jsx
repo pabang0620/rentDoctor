@@ -21,7 +21,7 @@ function parseErrorMessage(error) {
   return error
 }
 
-function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage, onClearChat, onQuickAnswer }) {
+function ChatInterface({ messages, isLoading, isStreaming, isInitializing, isQuickStreaming, error, onSendMessage, onClearChat, onQuickAnswer, onSkipStream }) {
   const [inputText, setInputText] = useState('')
   const [openCategory, setOpenCategory] = useState(null)
   const messagesEndRef = useRef(null)
@@ -129,7 +129,32 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
       </div>
 
       <div className="chat-messages">
-        {messages.map((message) => (
+        {isInitializing && (
+          <div className="chat-skeleton-wrap">
+            <div className="chat-skeleton-msg chat-skeleton-msg--ai">
+              <div className="chat-skeleton-avatar" />
+              <div className="chat-skeleton-lines">
+                <div className="chat-skeleton-line" style={{ width: '70%' }} />
+                <div className="chat-skeleton-line" style={{ width: '90%' }} />
+                <div className="chat-skeleton-line" style={{ width: '55%' }} />
+              </div>
+            </div>
+            <div className="chat-skeleton-msg chat-skeleton-msg--user">
+              <div className="chat-skeleton-lines chat-skeleton-lines--user">
+                <div className="chat-skeleton-line" style={{ width: '60%' }} />
+              </div>
+              <div className="chat-skeleton-avatar" />
+            </div>
+            <div className="chat-skeleton-msg chat-skeleton-msg--ai">
+              <div className="chat-skeleton-avatar" />
+              <div className="chat-skeleton-lines">
+                <div className="chat-skeleton-line" style={{ width: '80%' }} />
+                <div className="chat-skeleton-line" style={{ width: '50%' }} />
+              </div>
+            </div>
+          </div>
+        )}
+        {!isInitializing && messages.map((message) => (
           <div
             key={message.id}
             className={`chat-message chat-message--${message.role}`}
@@ -181,6 +206,14 @@ function ChatInterface({ messages, isLoading, isStreaming, error, onSendMessage,
 
         <div ref={messagesEndRef} />
       </div>
+
+      {isQuickStreaming && (
+        <div className="chat-skip-bar">
+          <button className="chat-skip-btn" onClick={onSkipStream}>
+            ▶▶ 답변 건너뛰기
+          </button>
+        </div>
+      )}
 
       {messages.length <= 1 && (
         <div className="chat-quick-questions">
