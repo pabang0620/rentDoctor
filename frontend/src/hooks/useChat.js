@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { chatAPI } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
@@ -45,6 +45,16 @@ export function useChat() {
   const streamingMessageRef = useRef('')
   const diagnosisContextRef = useRef(null)
   const isFirstMessageRef = useRef(true)
+  const quickStreamIntervalRef = useRef(null)
+
+  // 컴포넌트 언마운트 시 인터벌 정리
+  useEffect(() => {
+    return () => {
+      if (quickStreamIntervalRef.current) {
+        clearInterval(quickStreamIntervalRef.current)
+      }
+    }
+  }, [])
 
   /**
    * 메시지 추가 헬퍼
@@ -230,15 +240,51 @@ export function useChat() {
   }, [user])
 
   /**
-   * 사전 생성 답변 즉시 추가 (API 호출 없음)
+   * 사전 생성 답변을 AI 스트리밍처럼 순차 출력
    */
   const addQuickAnswer = useCallback((question, answer) => {
+    // 기존 스트리밍 중단
+    if (quickStreamIntervalRef.current) {
+      clearInterval(quickStreamIntervalRef.current)
+      quickStreamIntervalRef.current = null
+    }
+
     const now = new Date()
+    streamingMessageRef.current = ''
+
     setMessages(prev => [...prev,
       { id: Date.now(), role: 'user', content: question, timestamp: now },
-      { id: Date.now() + 1, role: 'assistant', content: answer, timestamp: now },
+      { id: Date.now() + 1, role: 'assistant', content: '', timestamp: now, isStreaming: true },
     ])
-  }, [])
+    setIsLoading(true)
+    setIsStreaming(true)
+
+    let i = 0
+    const CHUNK = 8   // 한 번에 보낼 글자 수
+    const DELAY = 14  // ms 간격
+
+    quickStreamIntervalRef.current = setInterval(() => {
+      if (i >= answer.length) {
+        clearInterval(quickStreamIntervalRef.current)
+        quickStreamIntervalRef.current = null
+        setMessages(prev => {
+          const updated = [...prev]
+          const last = updated[updated.length - 1]
+          if (last?.role === 'assistant' && last.isStreaming) {
+            updated[updated.length - 1] = { ...last, isStreaming: false }
+          }
+          return updated
+        })
+        setIsLoading(false)
+        setIsStreaming(false)
+        return
+      }
+
+      streamingMessageRef.current += answer.slice(i, Math.min(i + CHUNK, answer.length))
+      i += CHUNK
+      updateLastMessage(streamingMessageRef.current)
+    }, DELAY)
+  }, [updateLastMessage])
 
   return {
     messages,
