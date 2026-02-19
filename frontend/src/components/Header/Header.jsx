@@ -75,8 +75,10 @@ function Header() {
                 <button className="mobile-nav-logout" onClick={handleLogout}>로그아웃</button>
               </div>
             ) : (
-              <Link to="/login" className="mobile-nav-link" onClick={closeMenu}>로그인</Link>
-              <Link to="/register" className="mobile-nav-link" onClick={closeMenu}>회원가입</Link>
+              <>
+                <Link to="/login" className="mobile-nav-link" onClick={closeMenu}>로그인</Link>
+                <Link to="/register" className="mobile-nav-link" onClick={closeMenu}>회원가입</Link>
+              </>
             )}
             <div className="mobile-nav-emergency">
               <a href="tel:132" className="mobile-emergency-link">대한법률구조공단 132</a>
