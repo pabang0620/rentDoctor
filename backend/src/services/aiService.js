@@ -34,7 +34,7 @@ function parseGeminiError(err) {
   return new Error('AI 응답 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
 }
 
-const MODEL = 'gemini-2.0-flash-lite'
+const MODEL = 'gemini-2.0-flash'
 
 // 할루시네이션 최소화 생성 설정
 const GENERATION_CONFIG = {
