@@ -34,7 +34,7 @@ function parseGeminiError(err) {
   return new Error('AI 응답 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
 }
 
-const MODEL = 'gemini-2.0-flash'
+const MODEL = 'gemma-3-27b-it'
 
 // 할루시네이션 최소화 생성 설정
 const GENERATION_CONFIG = {
@@ -51,12 +51,19 @@ const DIAGNOSIS_CONFIG = {
   maxOutputTokens: 1024,
 }
 
-// 대화 히스토리 포맷 변환 (role: assistant → model)
-function toGeminiHistory(messages) {
-  return messages.slice(-20).map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }],
-  }))
+/**
+ * 대화 히스토리 포맷 변환 (role: assistant → model)
+ * Gemma는 systemInstruction 미지원 → 시스템 프롬프트를 히스토리 첫 메시지로 삽입
+ */
+function toGemmaHistory(systemPrompt, messages) {
+  return [
+    { role: 'user', parts: [{ text: systemPrompt }] },
+    { role: 'model', parts: [{ text: '네, 알겠습니다. 전세사기 피해 법률 상담을 도와드리겠습니다.' }] },
+    ...messages.slice(-20).map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }],
+    }))
+  ]
 }
 
 /**
@@ -67,11 +74,8 @@ export async function generateChatResponse(messages, userMessage) {
 
   const chat = getAI().chats.create({
     model: MODEL,
-    config: {
-      systemInstruction: SYSTEM_PROMPT + ragContext,
-      ...GENERATION_CONFIG,
-    },
-    history: toGeminiHistory(messages),
+    config: GENERATION_CONFIG,
+    history: toGemmaHistory(SYSTEM_PROMPT + ragContext, messages),
   })
 
   try {
@@ -90,11 +94,8 @@ export async function generateStreamingResponse(messages, userMessage, onChunk, 
 
   const chat = getAI().chats.create({
     model: MODEL,
-    config: {
-      systemInstruction: SYSTEM_PROMPT + ragContext,
-      ...GENERATION_CONFIG,
-    },
-    history: toGeminiHistory(messages),
+    config: GENERATION_CONFIG,
+    history: toGemmaHistory(SYSTEM_PROMPT + ragContext, messages),
   })
 
   try {
@@ -119,7 +120,7 @@ export async function generateStreamingResponse(messages, userMessage, onChunk, 
  * 전세사기 진단 분석
  */
 export async function analyzeDiagnosis(diagnosisData) {
-  const { checks, additionalInfo } = diagnosisData
+  const { checks } = diagnosisData
 
   const checkSummary = Object.entries(checks)
     .map(([key, value]) => `${key}: ${value ? '예' : '아니오'}`)
@@ -128,8 +129,6 @@ export async function analyzeDiagnosis(diagnosisData) {
   const prompt = `다음은 전세사기 피해 가능성 진단 체크리스트 결과입니다:
 
 ${checkSummary}
-
-추가 정보: ${additionalInfo || '없음'}
 
 위 정보를 바탕으로 분석해주세요.
 JSON 형식으로만 응답해주세요 (다른 텍스트 없이):
@@ -146,11 +145,12 @@ JSON 형식으로만 응답해주세요 (다른 텍스트 없이):
   try {
     response = await getAI().models.generateContent({
       model: MODEL,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        ...DIAGNOSIS_CONFIG,
-      },
-      contents: prompt,
+      config: DIAGNOSIS_CONFIG,
+      contents: [
+        { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+        { role: 'model', parts: [{ text: '네, 알겠습니다.' }] },
+        { role: 'user', parts: [{ text: prompt }] },
+      ],
     })
   } catch (err) {
     throw parseGeminiError(err)
