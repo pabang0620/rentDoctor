@@ -12,7 +12,7 @@ function PrivacyPage() {
         </div>
 
         <h1 className="policy-title">개인정보처리방침</h1>
-        <p className="policy-updated">최종 업데이트: 2025년 1월 1일</p>
+        <p className="policy-updated">최종 업데이트: 2026년 1월 1일</p>
 
         <div className="policy-content">
           <section className="policy-section">

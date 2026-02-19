@@ -12,7 +12,7 @@ function TermsPage() {
         </div>
 
         <h1 className="policy-title">이용약관</h1>
-        <p className="policy-updated">최종 업데이트: 2025년 1월 1일</p>
+        <p className="policy-updated">최종 업데이트: 2026년 1월 1일</p>
 
         <div className="policy-notice">
           ⚠️ 본 서비스는 <strong>법률 정보 제공을 목적</strong>으로 하며, AI의 응답은 법적 효력이 없습니다. 실제 법률 분쟁에는 반드시 전문 변호사 또는 법률 기관과 상담하시기 바랍니다.

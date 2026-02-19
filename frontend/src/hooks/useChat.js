@@ -154,6 +154,11 @@ export function useChat() {
    * 대화 초기화
    */
   const clearChat = useCallback(async () => {
+    // 빠른 답변 스트리밍 중이면 즉시 중단
+    if (quickStreamIntervalRef.current) {
+      clearInterval(quickStreamIntervalRef.current)
+      quickStreamIntervalRef.current = null
+    }
     if (sessionId) {
       try {
         await chatAPI.deleteSession(sessionId)
@@ -164,6 +169,8 @@ export function useChat() {
     setMessages([])
     setSessionId(null)
     setError(null)
+    setIsLoading(false)
+    setIsStreaming(false)
     streamingMessageRef.current = ''
     diagnosisContextRef.current = null
     isFirstMessageRef.current = true

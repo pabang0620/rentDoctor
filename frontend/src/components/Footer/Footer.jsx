@@ -31,7 +31,7 @@ function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="footer-copy">© 2025 전세지킴이. All rights reserved.</p>
+          <p className="footer-copy">© 2026 전세지킴이. All rights reserved.</p>
           <div className="footer-policy-links">
             <Link to="/terms" className="footer-policy-link">이용약관</Link>
             <span className="footer-policy-sep">·</span>
