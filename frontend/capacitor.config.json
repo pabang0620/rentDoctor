@@ -1,0 +1,11 @@
+{
+  "appId": "com.rentdoctor.app",
+  "appName": "전세닥터",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

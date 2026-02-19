@@ -8,10 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.1.1",
-    "react-markdown": "^9.0.1"
+    "react-markdown": "^9.0.1",
+    "react-router-dom": "^7.1.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
