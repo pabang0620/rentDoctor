@@ -2,13 +2,16 @@ import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 30000,
+  timeout: 45000,
   retries: 1,
+  fullyParallel: true,
+  workers: 4,
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'tests/report' }]],
   use: {
-    baseURL: 'http://localhost:5174',
+    baseURL: 'http://localhost:5173',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'off',
+    actionTimeout: 15000,
   },
-  // 서버는 외부에서 직접 실행: backend(3001), frontend(5173)
 })
